@@ -18,6 +18,15 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" sync></script>
+
+    <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" defer></script>
+
+
+
+
 </head>
 <body>
     <div id="app">
@@ -33,8 +42,11 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
+    
 
                     </ul>
+
+
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -49,6 +61,14 @@
                                 </li>
                             @endif
                         @else
+
+                        
+                            <li> 
+                                <a   href="{{url('/rols')}}"class="nav-link">Rols</a>
+
+                            </li> 
+
+
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
@@ -76,5 +96,8 @@
             @yield('content')
         </main>
     </div>
+
+   @yield('scripts')   <!--  Vamos a crear una nueva seccion  -->
+
 </body>
 </html>
