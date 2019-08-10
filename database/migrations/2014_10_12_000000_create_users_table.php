@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+
 
 class CreateUsersTable extends Migration
 {
@@ -35,10 +38,10 @@ class CreateUsersTable extends Migration
             $table->unsignedBigInteger('rol_id');
             $table->string('name');
             $table->string('ci'); 
-            $table->string('phone'); 
-            $table->string('username');
+            $table->string('phone')->nullable(); 
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('username');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
@@ -54,8 +57,8 @@ class CreateUsersTable extends Migration
             $table->unsignedBigInteger('category_id');
 
             $table->string('name');
-            $table->text('description'); 
-            $table->decimal('quantity'); 
+            $table->text('description')->nullable; 
+            $table->integer('quantity'); 
             $table->string('picture')->nullable();
             $table->float('prize'); 
             $table->timestamps();
@@ -70,7 +73,7 @@ class CreateUsersTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id'); 
             $table->float('total_amount');
-            $table->text('description'); 
+            $table->text('description')->nullable(); 
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users'); 
@@ -84,7 +87,7 @@ class CreateUsersTable extends Migration
             $table->unsignedBigInteger('sale_id'); 
             $table->unsignedBigInteger('product_id'); 
 
-            $table->decimal('quantity');
+            $table->integer('quantity');
             $table->float('amount');
             $table->timestamps();
 
@@ -92,8 +95,19 @@ class CreateUsersTable extends Migration
             $table->foreign('product_id')->references('id')->on('products'); 
         });
 
+        DB::table('rols')->insert([
+            'name' => 'superadmin', 
+        ]);  
 
-    
+        DB::table('users')->insert([
+            'name' => 'admin',
+            'ci' => '123456',
+            'phone' => '4269405',
+            'email' => 'admin@admin.com', 
+            'username' => 'admin',
+            'password' => bcrypt('admin'),
+            'rol_id' => 1
+        ]); 
     }
 
     /**
@@ -109,8 +123,5 @@ class CreateUsersTable extends Migration
         Schema::dropIfExists('users'); 
         Schema::dropIfExists('categories'); 
         Schema::dropIfExists('rols'); 
-
-
-
     }
 }
