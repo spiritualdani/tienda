@@ -73,8 +73,14 @@
 
                             </li> 
 
-                              <li> 
+                            <li> 
                                 <a   href="{{url('/categories')}}"class="nav-link">Categories</a>
+
+                            </li> 
+
+
+                            <li> 
+                                <a   href="{{url('/products')}}"class="nav-link">Products</a>
 
                             </li> 
 
