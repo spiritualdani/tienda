@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="text-right"> 
-                    <a href="{{ url('users/create') }}">
+                    <a href="{{ url('products/create') }}">
                         <button  class="btn btn-sm btn-success"> + New
                             
 
@@ -46,8 +46,8 @@
                                 <td>{{ $product-> category->name }}</td>
                                 
                                 <td>
-                                    @if($product->foto !='')
-                                    <img src="{{asset('img/products/'.$product->foto)}}" width="50px"><br>
+                                    @if($product->picture !='')
+                                    <img src="{{asset('img/products/'.$product->picture)}}" width="50px"><br>
                                     @endif()
 
                                 </td>

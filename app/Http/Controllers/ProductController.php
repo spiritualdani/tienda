@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Product; 
+use App\Category; 
+use App\Helper;
 
 class ProductController extends Controller
 {
@@ -26,7 +28,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::orderBy('name','ASC')->pluck('name','id'); 
+        return view('products.create', compact('categories')); 
     }
 
     /**
@@ -37,7 +40,33 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+               //dd($request->all());
+        $request->validate([
+            'name'=>'required',
+            'category_id' => 'required',
+            'description'=>'required',
+            'quantity'=>'required',
+            'prize'=>'required', 
+            'file' => 'image',  //tiene que ser imagen 
+        ]);
+
+        //$key = Helper::getToken();  PRUEBAS
+        //dd($key);     PRUEBAS
+
+        $request['password'] = bcrypt($request->password);
+        //Generar usuario 
+        $product = Product::create($request->all()); 
+
+        // Verificar imagen en el request
+        if($request->file){
+            $name = Helper::saveImage($request->file, 'products', $product->id);
+
+            $product->picture=$name; 
+            $product->save();  
+
+        }
+
+        return redirect('products'); 
     }
 
     /**

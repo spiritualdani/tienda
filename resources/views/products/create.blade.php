@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Users / New</div>
+                <div class="card-header">Products / New</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -27,30 +27,29 @@
                 @endif
 
 
-                {!! Form::open(['url' => 'users', 'files'=>true])!!}   
+                {!! Form::open(['url' => 'products', 'files'=>true])!!}   
 
 
-                <label>Rol:</label>
-                {!! Form::select('rol_id', $rols, null,['class' => 
+                <label>Category:</label>
+                {!! Form::select('category_id', $categories, null,['class' => 
                 'form-control', 'required' => 'required']) !!}  
 
                 <label>Name:</label>
                 {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
 
-                <label>Username:</label>
-                {!! Form::text('username', null,['class' => 'form-control', 'required' => 'required']) !!}
+                <label>Description:</label>
+                {!! Form::text('description', null,['class' => 'form-control', 'required' => 'required']) !!}
 
-                <label>CI:</label>
-                {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  
+                <label>Quantity:</label>
+                {!! Form::number('quantity', null,['class' => 'form-control', 'required' => 'required']) !!}  
 
-                <label>Phone:</label>
-                {!! Form::text('phone', null,['class' => 'form-control', 'required' => 'required']) !!}  
+                <label>Prize:</label>
+                {!! Form::number('prize', null,['class' => 'form-control', 'required' => 'required', 'step' => 'any']) !!}  
 
-                <label>Email:</label>
-                {!! Form::email('email', null,['class' => 'form-control','required' => 'required']) !!}
-                
-                <label>Password:</label>
-                <input type="password" name="password" class="form-control" required>  
+                <label>Picture: </label>
+                <input type="file" name="file" class="form-control">
+
+            
                 <div class="text-center"></div>
                     {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
                     
