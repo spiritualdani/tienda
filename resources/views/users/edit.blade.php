@@ -26,14 +26,35 @@
                     </div>
                 @endif
 
-                {!! Form::model($rol, ['url' => 'rols/'.$rol->id, 'method' => 'PUT'])!!}   
-                    
-                    <label>Name:</label>
-                    {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
+                
+                {!! Form::model($user,['url'=>'users/'.$user->id, 'method'=>'PUT', 'files'=>true]) !!}
+                        
+                <label>Rol:</label>
+                {!! Form::select('rol_id',$rols,null,['class'=>'form-control', 'required'=>'required']) !!}
 
-                    <div class="text-center"></div>
-                        {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
-                {!! Form::close()!!}
+                <label>Name:</label>
+                {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
+
+                <label>Username:</label>
+                {!! Form::text('username', null,['class' => 'form-control', 'required' => 'required']) !!}
+
+                <label>CI:</label>
+                {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  
+
+                <label>Phone:</label>
+                {!! Form::text('phone', null,['class' => 'form-control', 'required' => 'required']) !!}  
+
+                <label>Email:</label>
+                {!! Form::email('email', null,['class' => 'form-control','required' => 'required']) !!}
+                
+                <label>Password:</label>
+                <input type="password" name="password" class="form-control" required>
+
+                <div class="text-center">
+                {!! Form::submit('Save', ['class'=>'btn btn-sm btn-success']) !!}                    
+                </div>
+                {!! Form::close() !!}        
+
                 </div>
             </div>
         </div>

@@ -79,7 +79,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id); 
+        $rols = Rol::orderBy('name', 'ASC') -> pluck('name', 'id'); 
+        return view('users.edit', compact('user', 'rols')); 
     }
 
     /**
@@ -91,7 +93,30 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        $request->validate([
+    
+            'name'=>'required',
+            'username' => 'required | unique:users,username,'.$user->username.',username', 
+            'rol_id' => 'required',
+            'ci' => 'required',
+            'email' => 'required | unique:users,email,'.$user->email.',email', 
+            'password' => 'required'
+        
+        ]);
+
+        $password = $user->password; 
+        if($request->password){
+            $password = bcrypt($request->password); 
+        }
+
+        $request['password'] = $password; 
+
+        $foto = $user->foto; 
+        $user->fill($request->all());
+        $user->save(); 
+
+        return redirect('users');
     }
 
     /**
@@ -102,6 +127,11 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        if($user){
+              $user->delete();
+        }
+      
+        return redirect('users');  //redirigir a ruta users
     }
 }
