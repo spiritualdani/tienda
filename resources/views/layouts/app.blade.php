@@ -68,6 +68,11 @@
 
                             </li> 
 
+                             <li> 
+                                <a   href="{{url('/users')}}"class="nav-link">Users</a>
+
+                            </li> 
+
 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

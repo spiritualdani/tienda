@@ -45,7 +45,7 @@ class User extends Authenticatable
 
     public function rol()
     {
-        return $this->belogsTo('App\Rol'); 
+        return $this->belongsTo('App\Rol'); 
     }
 
     public function sales() 
