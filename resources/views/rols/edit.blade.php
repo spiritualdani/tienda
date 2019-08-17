@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Rols</div>
+                <div class="card-header">Rols / New</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -13,59 +13,32 @@
                             {{ session('status') }}
                         </div>
                     @endif
-                </div>
+                
 
-                <div class="text-right"> 
-                    <a href="{{ url('rols/create') }}">
-                        <button  class="btn btn-sm btn-success"> + New
-                            
 
-                        </button>
-                    </a>
-
-                </div>
-
-                <table class="table table-striped table-bordered" id="myTable">
-                    <thead>
-                        <tr>
-                            <td>Names</td>
-                            <td>Actions</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($rols as $rol)
-                            <tr>
-                                <td>{{ $rol->name }}</td>
-                                <td><a href="/rols/{{$rol->id}}/edit">
-                                    <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Edit</button>
-                                    </a>
-                                    
-                                    {!! Form::open(['url'=> '/rols/'.$rol->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete rol")', 'style' => 'float:left'])!!}
-
-                                    {!! Form::submit('Delete',['class'=>'btn btn-sm btn-danger'])!!}
-                                    {!! Form::close()!!}
-
-                                </td>
-
-                            </tr>
-
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
                         @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-                    </tbody>
-                </table>
+                {!! Form::model($rol, ['url' => 'rols/'.$rol->id, 'method' => 'PUT'])!!}   
+                    
+                    <label>Name:</label>
+                    {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <div class="text-center"></div>
+                        {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
+                {!! Form::close()!!}
+                </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
 
-@section('scripts')
-
-<script type="text/javascript"> 
-    $(document).ready( function () {
-    $('#myTable').DataTable();
-    } );
- </script>
-
-@endsection 
 

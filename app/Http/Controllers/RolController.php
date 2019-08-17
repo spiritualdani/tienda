@@ -64,7 +64,10 @@ class RolController extends Controller
      */
     public function edit($id)
     {
-        //
+        $rol  = Rol::find($id); 
+
+        return view('rols.edit', compact('rol'));
+
     }
 
     /**
@@ -76,7 +79,17 @@ class RolController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
+        $rol = Rol::find($id); 
+        $request->validate([
+            'name' => 'required|unique:rols,name,'.$rol->name.',name|max:50',
+
+        ]);
+
+        $rol->name=$request->name;
+        $rol->save();
+
+        return redirect('/rols'); 
     }
 
     /**
@@ -87,6 +100,11 @@ class RolController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $rol = Rol::find($id); 
+        if($rol){
+            $rol->delete(); 
+        }
+
+        return redirect('rols');
     }
 }
