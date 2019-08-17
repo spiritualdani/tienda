@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">Categorias</div>
+                <div class="card-header">Categories</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -14,13 +14,10 @@
                         </div>
                     @endif
                     <div class="text-right">
-                        <a href="{{ url('categorias/create')}}">
-                           <button class="btn btn-sm btn-success"> + Nuevo
+                        <a href="{{ url('categories/create')}}">
+                           <button class="btn btn-sm btn-success"> + New
                            </button>     
-
-
                         </a>            
-                
                     </div>
 
                         <!-- <a href="/roles/create">+ Nuevo</a>    -->
@@ -30,22 +27,22 @@
                     table-bordered">
                         <thead>
                             <tr>
-                                <td>Nombres</td>
+                                <td>Name</td>
                          
                             </tr>
                         </thead>   
                         <tbody>
-                            @foreach($categorias as $categoria)
+                            @foreach($categories as $category)
                                 <tr>
-                                    <td>{{ $categoria-> nombre}}</td>
+                                    <td>{{ $category-> name}}</td>
                                   
-                                    <td><a href="/categorias/{{$categoria->id}}/edit">
-                                        <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Editar</button>
+                                    <td><a href="/categories/{{$category->id}}/edit">
+                                        <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Edit</button>
                                     </a>
                                     
-                                    {!! Form::open(['url'=> '/categorias/'.$categoria->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Desea eliminar la categoria")', 'style' => 'float:left'])!!}
+                                    {!! Form::open(['url'=> '/categories/'.$category->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete this category")', 'style' => 'float:left'])!!}
 
-                                    {!! Form::submit('Eliminar',['class'=>'btn btn-sm btn-danger'])!!}
+                                    {!! Form::submit('Delete',['class'=>'btn btn-sm btn-danger'])!!}
                                     {!! Form::close()!!}
 
                                 </td>

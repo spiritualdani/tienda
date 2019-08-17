@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">Categorias / Nuevo</div>
+                <div class="card-header">Categories / New</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -26,13 +26,13 @@
 
 
 
-                    {!! Form::open(['url' => 'categorias'])!!}   
-                    <label>Nombre:</label>
-                    {!! Form::text('nombre', null,['class' => 'form-control', 'required' => 'required']) !!}
+                    {!! Form::open(['url' => 'categories'])!!}   
+                    <label>Name:</label>
+                    {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
 
                
                     <div class="text-center"></div>
-                        {!! Form::submit('Guardar', ['class'=> 'btn btn-sm btn-success'])!!}
+                        {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
                     
                     {!! Form::close()!!}
                   
