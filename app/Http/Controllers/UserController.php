@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User; 
+use App\Rol; 
 
 class UserController extends Controller
 {
@@ -25,7 +26,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $rols = Rol::orderBy('name','ASC')-> pluck('name', 'id'); 
+        return view('users.create', compact('rols'));
+        
     }
 
     /**
@@ -36,7 +39,25 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'=>'required',
+            'username' => 'required | unique:users,username', 
+            'rol_id' => 'required',
+            'ci' => 'required',
+            'email' => 'required | unique:users,email', 
+            'password' => 'required'
+        ]);
+
+        //$key = Helper::getToken();  PRUEBAS
+        //dd($key);     PRUEBAS
+
+        $request['password'] = bcrypt($request->password);
+        //Generar usuario 
+        $user = User::create($request->all()); 
+
+        // Verificar imagen en el request
+
+        return redirect('users'); 
     }
 
     /**
