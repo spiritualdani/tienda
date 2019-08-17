@@ -88,7 +88,9 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $product = Product::find($id); 
+        $categories = Category::orderBy('name','ASC')->pluck('name', 'id'); 
+        return view('products.edit', compact('product', 'categories')); 
     }
 
     /**
@@ -100,7 +102,30 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = Product::find($id);
+        $request->validate([
+            'name'=>'required',
+            'category_id' => 'required',
+            'description'=>'required',
+            'quantity'=>'required',
+            'prize'=>'required', 
+            'file' => 'image',  //tiene que ser imagen 
+        ]);
+
+       
+        $foto = $product->picture; 
+        if($request->file){
+            Helper::deleteImage($product->picture,'products');
+             $foto = Helper::saveImage($request->file, 'products', $product->id);
+
+        }
+
+        $request['picture']=$foto; 
+        $product->fill($request->all());
+        $product->save(); 
+
+        return redirect('products');
+
     }
 
     /**

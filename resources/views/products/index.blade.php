@@ -52,7 +52,7 @@
 
                                 </td>
 
-                                <td><a href="/users/{{$product->id}}/edit">
+                                <td><a href="/products/{{$product->id}}/edit">
                                     <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Edit</button>
                                     </a>
                                     
