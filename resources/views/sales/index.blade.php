@@ -29,18 +29,19 @@
                     <thead>
                         <tr>
                             <td>User</td>
-                            <td>CI</td>  
+                            <!--<td>CI</td>-->  
                             <td>Description</td>
                             <td>Total Amount</td>
+                            <td>Actions</td>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($sales as $sale)
                             <tr>
-                                <td>{{ $sale->user->name}}</td>
-                                <td>{{ $sale->user->ci}}</td>
+                                <td>{{ $sale->user->id}}</td>
+                                <!--<td>{{ $sale->user->ci}}</td>-->
                                 <td>{{ $sale->description }}</td>
-                                <td>{{ $user->total_amount }}</td>
+                                <td>{{ $sale->total_amount }}</td>
                                
                                 <td><a href="/sales/{{$sale->id}}/edit">
                                     <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Edit</button>

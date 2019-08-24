@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Users / New</div>
+                <div class="card-header">Sales / New</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -27,30 +27,23 @@
                 @endif
 
 
-                {!! Form::open(['url' => 'users', 'files'=>true])!!}   
+                {!! Form::open(['url' => 'sales', 'files'=>true])!!}   
 
 
-                <label>Rol:</label>
-                {!! Form::select('rol_id', $rols, null,['class' => 
+                <label>User:</label>
+                {!! Form::select('user_id', $users, null,['class' => 
                 'form-control', 'required' => 'required']) !!}  
-
-                <label>Name:</label>
-                {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
-
-                <label>Username:</label>
-                {!! Form::text('username', null,['class' => 'form-control', 'required' => 'required']) !!}
-
+                <!--
                 <label>CI:</label>
-                {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  
+                {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  -->
 
-                <label>Phone:</label>
-                {!! Form::text('phone', null,['class' => 'form-control', 'required' => 'required']) !!}  
-
-                <label>Email:</label>
-                {!! Form::email('email', null,['class' => 'form-control','required' => 'required']) !!}
+                <label>Description:</label>
+                {!! Form::textarea('description', null,['class' => 'form-control', 'required' => 'required']) !!}
                 
-                <label>Password:</label>
-                <input type="password" name="password" class="form-control" required>  
+                <!--
+                <label>Total amount:</label>
+                {!! Form::number('total_amount', null,['class' => 'form-control', 'required' => 'required']) !!}  -->
+ 
                 <div class="text-center"></div>
                     {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
                     

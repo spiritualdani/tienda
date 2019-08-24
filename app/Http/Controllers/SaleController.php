@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Sale; 
+use App\User; 
 class SaleController extends Controller
 {
     /**
@@ -24,7 +25,8 @@ class SaleController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::orderBy('name', 'ASC') -> pluck('name', 'id'); 
+        return view('sales.create', compact('users')); 
     }
 
     /**
@@ -35,7 +37,17 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'user_id' => 'required', 
+            'description' => 'required',
+        ]); 
+
+
+        $request['total_amount']= 0 ;  // Agregar elementos 
+       
+        $sale = Sale::create($request->all());
+          dd($request->all()); 
+        return redirect('sales');
     }
 
     /**
@@ -57,7 +69,10 @@ class SaleController extends Controller
      */
     public function edit($id)
     {
-        //
+        $sale = Sale::find($id);
+        $users = User::orderBy('name', 'ASC') -> pluck('name', 'id'); 
+        return view('sales.edit', compact('sale', 'users'));
+
     }
 
     /**
@@ -69,7 +84,15 @@ class SaleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $sale = Sale::find($id); 
+        $request->validate([
+            'user_id' => 'required', 
+            'description' => 'required',
+        ]); 
+
+        $sale->fill($request->all());
+        $sale->save(); 
+        return redirect('sales');
     }
 
     /**
@@ -80,6 +103,11 @@ class SaleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $sale = Sale::find($id);
+        if($sale){
+              $sale->delete();
+        }
+      
+        return redirect('sales');  //redirigir a ruta users
     }
 }
