@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="text-right"> 
-                    <a href="{{ url('products/create') }}">
+                    <a href="{{ url('sales/products_sales/create') }}">
                         <button  class="btn btn-sm btn-success"> + New
                             
 

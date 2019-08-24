@@ -28,7 +28,9 @@ class ProductSaleController extends Controller
      */
     public function create($sale_id)
     {
-        //
+        $sales = Sale::orderBy('id', 'ASC')-> pluck('id', 'user_id');
+        $products =Product::orderBy('name', 'ASC')->pluck('name', 'id'); 
+         return view('products_sales.create', compact('sales', 'products')); 
     }
 
     /**
@@ -39,7 +41,20 @@ class ProductSaleController extends Controller
      */
     public function store($sale_id, Request $request)
     {
-        //
+
+        $request->validate([
+            'sale_id' => 'required', 
+            'product_id' => 'required',
+            'quantity' => 'required',
+            'amount' => 'required'
+        ]); 
+
+
+   
+        $product_sale = ProductSale::create($request->all());
+          dd($request->all()); 
+        return redirect('sales/$product_sale->id/product_sales');
+
     }
 
     /**
