@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">Sales</div>
+                <div class="card-header">Product Sales</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="text-right"> 
-                    <a href="{{ url('sales/create') }}">
+                    <a href="{{ url('products/create') }}">
                         <button  class="btn btn-sm btn-success"> + New
                             
 
@@ -28,36 +28,32 @@
                 <table class="table table-striped table-bordered" id="myTable">
                     <thead>
                         <tr>
-                            <td>User</td>
-                            <!--<td>CI</td>-->  
-                            <td>Description</td>
-                            <td>Total Amount</td>
+                            <td>Sale</td>
+                            <td>Product</td>
+                            <td>Quantity</td>
+                            <td>Amount</td>
                             <td>Actions</td>
+                      
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($sales as $sale)
+                         @foreach($products_sales as $product_sale)
+                        
                             <tr>
-                                <td>{{ $sale->user->id}}</td>
-                                <!--<td>{{ $sale->user->ci}}</td>-->
-                                <td>{{ $sale->description }}</td>
-                                <td>{{ $sale->total_amount }}</td>
-                               
-                                <td>
-                                    <a href="/sales/{{$sale->id}}/products_sales">
-                                    <button class="btn btn-sm" style="float:left; margin-right: 15px;">Product Sale</button>
-                                    </a>
+                                <td>{{ $product_sale->sale->id }}</td>
+                                <td>{{ $product_sale->product->name }}</td>
+                                <td>{{ $product_sale->quantity }}</td>
+                                <td>{{ $product_sale->amount }} </td>
+                           
 
-                                    <a href="/sales/{{$sale->id}}/edit">
+                                <td><a href="/sales/{{$product_sale->id}}/products_sales/edit">
                                     <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Edit</button>
                                     </a>
-
-
                                     
-                                    {!! Form::open(['url'=> '/sales/'.$sale->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete sale")', 'style' => 'float:left'])!!}
+                                    {!! Form::open(['url'=> '/sales/'.$product->id.'products_sales', 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete user")', 'style' => 'float:left'])!!}
 
                                     {!! Form::submit('Delete',['class'=>'btn btn-sm btn-danger'])!!}
-                                    {!! Form::close()!!} 
+                                    {!! Form::close()!!}
 
                                 </td>
 
