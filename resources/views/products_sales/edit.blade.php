@@ -42,7 +42,7 @@
                 {!! Form::number('quantity', null,['class' => 'form-control', 'required' => 'required']) !!}
 
                 <label>Amount:</label>
-                {!! Form::number('amount', null,['class' => 'form-control', 'required' => 'required']) !!}  
+                {!! Form::number('amount', null,['class' => 'form-control', 'disabled' => 'disabled']) !!}  
 
                 <div class="text-center">
                 {!! Form::submit('Save', ['class'=>'btn btn-sm btn-success']) !!}                    

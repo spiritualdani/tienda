@@ -112,15 +112,23 @@ class ProductSaleController extends Controller
     public function update($sale_id, Request $request, $id)
     {
 
-
+        $product = Product::find($request->product_id); 
+        $sale = Sale::find($request->sale_id); 
       
         $product_sale = ProductSale::find($id); 
         $request->validate([
             'sale_id' => 'required', 
             'product_id' => 'required',
             'quantity' => 'required',
-            'amount' => 'required'
+       
         ]);
+
+
+        $request['amount'] = $request->quantity * $product->prize;
+        $sale->total_amount = $sale->total_amount + $request->amount;
+
+        $sale->save();
+
 
         $product_sale->fill($request->all());
         $product_sale->save();
