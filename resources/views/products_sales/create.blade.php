@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Products / New</div>
+                <div class="card-header">Products_Sales / New</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -27,27 +27,20 @@
                 @endif
 
 
-                {!! Form::open(['url' => 'products', 'files'=>true])!!}   
-
-
-                <label>Category:</label>
-                {!! Form::select('category_id', $categories, null,['class' => 
+                {!! Form::open(['url' => 'sales/'.$sale->id.'/products_sales', 'files'=>true])!!}   
+                
+                <label>Sale:</label>
+                {!! Form::text('sale_id', $sale->id, null,['class' => 
                 'form-control', 'required' => 'required']) !!}  
-
-                <label>Name:</label>
-                {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
-
-                <label>Description:</label>
-                {!! Form::text('description', null,['class' => 'form-control', 'required' => 'required']) !!}
+                <br>
+                <label>Product:</label>
+                {!! Form::select('product_id',$products, null,['class' => 'form-control', 'required' => 'required']) !!}
 
                 <label>Quantity:</label>
-                {!! Form::number('quantity', null,['class' => 'form-control', 'required' => 'required']) !!}  
+                {!! Form::number('quantity',null,['class' => 'form-control', 'required' => 'required']) !!}
 
-                <label>Prize:</label>
-                {!! Form::number('prize', null,['class' => 'form-control', 'required' => 'required', 'step' => 'any']) !!}  
-
-                <label>Picture: </label>
-                <input type="file" name="file" class="form-control">
+                <label>Amount:</label>
+                {!! Form::number('amount', null,['class' => 'form-control', 'disabled' => 'disabled']) !!}  
 
             
                 <div class="text-center"></div>

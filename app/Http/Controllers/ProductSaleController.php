@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Sale; 
+use App\Product;
 use App\ProductSale; 
 
 class ProductSaleController extends Controller
@@ -17,8 +18,14 @@ class ProductSaleController extends Controller
     {
 
         $sale = Sale::find($sale_id); 
-        $products_sales = ProductSale::where('sale_id', '$sale->id')->get();
-        return view('products_sales.index', compact('products_sales'));
+            
+        //dd($sale->id);
+
+        $products_sales = ProductSale::where('sale_id', $sale->id)->get();
+
+        $sales = Sale::orderBy('id', 'ASC')->pluck('id', 'user_id'); 
+
+        return view('products_sales.index', compact('products_sales', 'sales', 'sale'));
     }
 
     /**
@@ -28,9 +35,14 @@ class ProductSaleController extends Controller
      */
     public function create($sale_id)
     {
-        $sales = Sale::orderBy('id', 'ASC')-> pluck('id', 'user_id');
-        $products =Product::orderBy('name', 'ASC')->pluck('name', 'id'); 
-         return view('products_sales.create', compact('sales', 'products')); 
+
+        $sale = Sale::find($sale_id);
+      
+       //$sales = Sale::orderBy('id', 'ASC')->pluck('id', 'user_id'); 
+
+       $products = Product::orderBy('name', 'ASC')->pluck('name', 'id'); 
+
+    return view('products_sales.create', compact('sale', 'products')); 
     }
 
     /**
@@ -42,19 +54,26 @@ class ProductSaleController extends Controller
     public function store($sale_id, Request $request)
     {
 
+        $product = Product::find($request->product_id); 
+        $sale = Sale::find($request->sale_id); 
+        //$products_sales = ProductSale::find($sale_id); 
         $request->validate([
             'sale_id' => 'required', 
             'product_id' => 'required',
             'quantity' => 'required',
-            'amount' => 'required'
+         
         ]); 
 
+         $request['amount'] = $request->quantity * $product->prize;
+         $sale->total_amount = $sale->total_amount + $request->amount;
+
+         $sale->save();
 
    
         $product_sale = ProductSale::create($request->all());
-          dd($request->all()); 
-        return redirect('sales/$product_sale->id/product_sales');
 
+        return redirect('/sales/'.$product_sale->sale_id.'/products_sales');
+      
     }
 
     /**
@@ -76,7 +95,11 @@ class ProductSaleController extends Controller
      */
     public function edit($sale_id, $id)
     {
-        //
+        $sale = Sale::find($sale_id);
+        $product_sale = ProductSale::find($id);
+
+        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id'); 
+        return view('products_sales.edit', compact('product_sale', 'products',''));
     }
 
     /**
@@ -88,7 +111,21 @@ class ProductSaleController extends Controller
      */
     public function update($sale_id, Request $request, $id)
     {
-        //
+
+
+      
+        $product_sale = ProductSale::find($id); 
+        $request->validate([
+            'sale_id' => 'required', 
+            'product_id' => 'required',
+            'quantity' => 'required',
+            'amount' => 'required'
+        ]);
+
+        $product_sale->fill($request->all());
+        $product_sale->save();
+        return redirect('/sales/'.$product_sale->sale_id.'/products_sales'); 
+
     }
 
     /**
@@ -99,6 +136,12 @@ class ProductSaleController extends Controller
      */
     public function destroy($sale_id, $id)
     {
-        //
+        $product_sale = ProductSale::find($id); 
+        if($product_sale){
+              $product_sale->delete();
+        }
+
+      
+        return redirect('/sales/'.$product_sale->sale_id.'/products_sales');  //redirigir a ruta users
     }
 }

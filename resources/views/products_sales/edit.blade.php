@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Rols / New</div>
+                <div class="card-header">Products Sales / New</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -26,39 +26,29 @@
                     </div>
                 @endif
 
-                
-                {!! Form::model($product,['url'=>'products/'.$product->id, 'method'=>'PUT', 'files'=>true]) !!}
-                        
-                <label>Category:</label>
-                {!! Form::select('category_id', $categories, null,['class' => 
-                'form-control', 'required' => 'required']) !!} 
+               
 
-                <label>Name:</label>
-                {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
+                {!! Form::model($product_sale,
+                    ['url'=>'sales/'.$product_sale->sale_id.'/products_sales/'.$product_sale->id, 'method'=>'PUT', 'files'=>true]) !!}
 
-                <label>Description:</label>
-                {!! Form::text('description', null,['class' => 'form-control', 'required' => 'required']) !!}
+                 <label>Sale:</label>
+                {!! Form::text('sale_id', $product_sale->sale_id, null,['class' => 
+                'form-control', 'required' => 'required']) !!}  
+                <br>
+                <label>Product:</label>
+                {!! Form::select('product_id',$products, null,['class' => 'form-control', 'required' => 'required']) !!}
 
                 <label>Quantity:</label>
-                {!! Form::number('quantity', null,['class' => 'form-control', 'required' => 'required']) !!}   
+                {!! Form::number('quantity', null,['class' => 'form-control', 'required' => 'required']) !!}
 
-                <label>Prize:</label>
-                {!! Form::number('prize', null,['class' => 'form-control', 'required' => 'required', 'step' => 'any']) !!}  
-
-               
-                
-                <label>Picture: </label>
-
-                @if($product->foto !='')
-                <img src="{{asset('img/products/'.$product->foto)}}" width="50px"><br>
-                @endif()
-                <input type="file" name="file" class="form-control">
-
+                <label>Amount:</label>
+                {!! Form::number('amount', null,['class' => 'form-control', 'required' => 'required']) !!}  
 
                 <div class="text-center">
                 {!! Form::submit('Save', ['class'=>'btn btn-sm btn-success']) !!}                    
                 </div>
                 {!! Form::close() !!}        
+
 
                 </div>
             </div>

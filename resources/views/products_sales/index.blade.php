@@ -16,7 +16,8 @@
                 </div>
 
                 <div class="text-right"> 
-                    <a href="{{ url('sales/products_sales/create') }}">
+                    <a href="/sales/{{$sale->id}}/products_sales/create">
+                    
                         <button  class="btn btn-sm btn-success"> + New
                             
 
@@ -46,12 +47,16 @@
                                 <td>{{ $product_sale->amount }} </td>
                            
 
-                                <td><a href="/sales/{{$product_sale->id}}/products_sales/edit">
+                                <td><a href="/sales/{{$product_sale->sale->id}}/products_sales/{{$product_sale->id}}/edit">
                                     <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Edit</button>
                                     </a>
-                                    
-                                    {!! Form::open(['url'=> '/sales/'.$product->id.'products_sales', 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete user")', 'style' => 'float:left'])!!}
+                              
+                                    {!! Form::open(
+                                        ['url'=> '/sales/'.$product_sale->sale->id.'/products_sales/'.$product_sale->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete user")', 'style' => 'float:left'])!!}
 
+
+            
+                                 
                                     {!! Form::submit('Delete',['class'=>'btn btn-sm btn-danger'])!!}
                                     {!! Form::close()!!}
 

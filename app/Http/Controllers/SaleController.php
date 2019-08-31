@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Sale; 
 use App\User; 
+use App\ProductSale; 
 class SaleController extends Controller
 {
     /**
@@ -14,8 +15,14 @@ class SaleController extends Controller
      */
     public function index()
     {
+        //$products_sales = ProductSale::orderBy('name', 'ASC')->get(); 
+
         $sales = Sale::orderBy('total_amount', 'ASC')->get(); 
+
+       //$total_update = Sale::where('id', $products_sales->sale_id)->get(); 
+
         return view('sales.index', compact('sales')); 
+
     }
 
     /**
@@ -25,6 +32,7 @@ class SaleController extends Controller
      */
     public function create()
     {
+
         $users = User::orderBy('name', 'ASC') -> pluck('name', 'id'); 
         return view('sales.create', compact('users')); 
     }
@@ -46,7 +54,7 @@ class SaleController extends Controller
         $request['total_amount']= 0 ;  // Agregar elementos 
        
         $sale = Sale::create($request->all());
-          dd($request->all()); 
+          
         return redirect('sales');
     }
 
