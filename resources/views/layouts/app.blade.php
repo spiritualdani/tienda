@@ -49,6 +49,8 @@
 
 
                     <!-- Right Side Of Navbar -->
+                    
+                    
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         @guest
@@ -61,7 +63,8 @@
                                 </li>
                             @endif
                         @else
-
+                        
+                        @if(auth::user()->rol->name=='superadmin')
                         
                             <li> 
                                 <a   href="{{url('/rols')}}"class="nav-link">Rols</a>
@@ -88,6 +91,8 @@
                                 <a   href="{{url('/sales')}}"class="nav-link">Sales</a>
 
                             </li> 
+
+                        @endif
 
 
                             <li class="nav-item dropdown">

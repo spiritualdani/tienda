@@ -36,6 +36,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php 
+                            $count_total = 0; 
+                        ?> 
+
                         @foreach($sales as $sale)
                             <tr>
                                 <td>{{ $sale->user->id}}</td>
@@ -59,13 +63,33 @@
                                     {!! Form::submit('Delete',['class'=>'btn btn-sm btn-danger'])!!}
                                     {!! Form::close()!!} 
 
+
+
+
+
                                 </td>
 
                             </tr>
 
+                            <?php
+                                $count_total = $count_total + $sale->total_amount; 
+                            ?>
+
                         @endforeach
 
                     </tbody>
+
+                    <tfoot>
+
+                        <tr >
+                            <td colspan="2" class="text-left; font-weight-bold">TOTAL: </td>
+                            <!--<td>CI</td>-->  
+                            <td  class="text-right font-weight-bold" >{{$count_total}}</td>
+                            <td></td>
+
+                        </tr>
+
+                    </tfoot>
                 </table>
             </div>
         </div>
