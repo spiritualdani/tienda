@@ -5,6 +5,23 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
+
+                <div> 
+                    <a href="/sales">
+                        <button  class="btn btn-sm btn-primary"  style="float:left; margin-right: 15px; margin-bottom: 0px;"> Back
+                            
+
+                        </button>
+                    </a>
+
+                    <a href="/sales/{{$sale->id}}/products_sales/create">
+                    
+                        <button  class="btn btn-sm btn-success" style="float:right; margin-right: 0px; margin-bottom: 0px;"> + New
+                            
+
+                        </button>
+                    </a>
+                </div>
                 <div class="card-header">Product Sales</div>
 
                 <div class="card-body">
@@ -16,13 +33,7 @@
                 </div>
 
                 <div class="text-right"> 
-                    <a href="/sales/{{$sale->id}}/products_sales/create">
-                    
-                        <button  class="btn btn-sm btn-success"> + New
-                            
-
-                        </button>
-                    </a>
+                   <!--buttoms-->
 
                 </div>
 

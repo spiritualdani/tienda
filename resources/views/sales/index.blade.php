@@ -17,7 +17,7 @@
 
                 <div class="text-right"> 
                     <a href="{{ url('sales/create') }}">
-                        <button  class="btn btn-sm btn-success"> + New
+                        <button  class="btn btn-sm btn-success" style="float:right; margin-right: 0px; margin-bottom: 25px;"> + New
                             
 
                         </button>
@@ -45,7 +45,7 @@
                                
                                 <td>
                                     <a href="/sales/{{$sale->id}}/products_sales">
-                                    <button class="btn btn-sm" style="float:left; margin-right: 15px;">Product Sale</button>
+                                    <button class="btn btn-sm btn-info" style="float:left; margin-right: 15px;">Product Sale</button>
                                     </a>
 
                                     <a href="/sales/{{$sale->id}}/edit">

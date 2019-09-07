@@ -122,10 +122,22 @@ class ProductSaleController extends Controller
             'quantity' => 'required',
        
         ]);
-
+        //dd($product_sale->amount);
+        $old_amount = $product_sale->amount; 
 
         $request['amount'] = $request->quantity * $product->prize;
-        $sale->total_amount = $sale->total_amount + $request->amount;
+       
+        /**
+        if($old_amount < $request->amount){
+            $sale->total_amount = $sale->total_amount - $old_amount + $request->amount;
+        }
+        else 
+            {
+                $sale->total_amount = $sale->total_amount - $old_amount + $request->amount;
+            }*/
+
+        $sale->total_amount = $sale->total_amount - $old_amount + $request->amount;
+    
 
         $sale->save();
 
@@ -145,8 +157,15 @@ class ProductSaleController extends Controller
     public function destroy($sale_id, $id)
     {
         $product_sale = ProductSale::find($id); 
+
         if($product_sale){
-              $product_sale->delete();
+
+            $sale=Sale::find($sale_id);
+
+
+            $sale->total_amount=$sale->total_amount - $product_sale->amount; 
+            $sale->save();
+            $product_sale->delete();
         }
 
       

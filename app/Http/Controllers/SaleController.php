@@ -17,7 +17,7 @@ class SaleController extends Controller
     {
         //$products_sales = ProductSale::orderBy('name', 'ASC')->get(); 
 
-        $sales = Sale::orderBy('total_amount', 'ASC')->get(); 
+        $sales = Sale::orderBy('user_id', 'ASC')->get(); 
 
        //$total_update = Sale::where('id', $products_sales->sale_id)->get(); 
 
@@ -111,8 +111,10 @@ class SaleController extends Controller
      */
     public function destroy($id)
     {
-        $sale = Sale::find($id);
+        $sale = Sale::find($id);  
+
         if($sale){
+              $product_sale = ProductSale::where('sale_id', $sale->id)->delete();
               $sale->delete();
         }
       
