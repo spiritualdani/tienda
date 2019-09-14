@@ -3,10 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Rol; 
 
 class RolController extends Controller
 {
+
+    /*
+    public function __construct()
+    {
+
+        $user = Auth::user();
+
+       if($user->rol_id != 1)
+        {
+            return "No tiene suficientes permisos"; 
+        }
+    } */
+
     /**
      * Display a listing of the resource.
      *
@@ -14,8 +28,8 @@ class RolController extends Controller
      */
     public function index()
     {
-
         $rols = Rol::orderBy('name', 'ASC')->get();
+     
         return view('rols.index', compact('rols'));
     }
 

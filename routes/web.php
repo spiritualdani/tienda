@@ -19,7 +19,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'super'])->group(function () {
 	Route::resource('rols','RolController'); 
 	Route::resource('users','UserController');
 	Route::resource('categories', 'CategoryController'); 
