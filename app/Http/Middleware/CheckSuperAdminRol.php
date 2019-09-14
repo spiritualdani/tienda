@@ -24,6 +24,6 @@ class CheckSuperAdminRol
 
         }
         
-        return $next($request);
+        return $next($request);  // todo continua  
     }
 }

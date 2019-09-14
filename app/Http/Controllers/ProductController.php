@@ -18,7 +18,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::orderBy('name','ASC')->get(); 
-        return view('products.index', compact('products')); 
+        return view('superadmin.products.index', compact('products')); 
     }
 
     /**
@@ -29,7 +29,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::orderBy('name','ASC')->pluck('name','id'); 
-        return view('products.create', compact('categories')); 
+        return view('superadmin.products.create', compact('categories')); 
     }
 
     /**
@@ -90,7 +90,7 @@ class ProductController extends Controller
     {
         $product = Product::find($id); 
         $categories = Category::orderBy('name','ASC')->pluck('name', 'id'); 
-        return view('products.edit', compact('product', 'categories')); 
+        return view('superadmin.products.edit', compact('product', 'categories')); 
     }
 
     /**

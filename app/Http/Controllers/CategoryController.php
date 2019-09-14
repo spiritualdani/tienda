@@ -16,7 +16,7 @@ class CategoryController extends Controller
     {
         // 
         $categories = Category::orderBy('name','ASC')->get(); 
-        return view('categories.index', compact('categories'));
+        return view('superadmin.categories.index', compact('categories'));
     }
 
     /**
@@ -26,7 +26,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('categories.create'); 
+        return view('superadmin.categories.create'); 
     }
 
     /**
@@ -67,7 +67,7 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::find($id); 
-        return view('categories.edit', compact('category'));
+        return view('superadmin.categories.edit', compact('category'));
     }
 
     /**

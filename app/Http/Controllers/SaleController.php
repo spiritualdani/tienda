@@ -21,7 +21,7 @@ class SaleController extends Controller
 
        //$total_update = Sale::where('id', $products_sales->sale_id)->get(); 
 
-        return view('sales.index', compact('sales')); 
+        return view('superadmin.sales.index', compact('sales')); 
 
     }
 
@@ -34,7 +34,7 @@ class SaleController extends Controller
     {
 
         $users = User::orderBy('name', 'ASC') -> pluck('name', 'id'); 
-        return view('sales.create', compact('users')); 
+        return view('superadmin.sales.create', compact('users')); 
     }
 
     /**
@@ -79,7 +79,7 @@ class SaleController extends Controller
     {
         $sale = Sale::find($id);
         $users = User::orderBy('name', 'ASC') -> pluck('name', 'id'); 
-        return view('sales.edit', compact('sale', 'users'));
+        return view('superadmin.sales.edit', compact('sale', 'users'));
 
     }
 

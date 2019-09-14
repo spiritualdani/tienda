@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::orderBy('name', 'ASC')->get();
-        return view('users.index', compact('users'));  
+        return view('superadmin.users.index', compact('users'));  
     }
 
     /**
@@ -27,7 +27,7 @@ class UserController extends Controller
     public function create()
     {
         $rols = Rol::orderBy('name','ASC')-> pluck('name', 'id'); 
-        return view('users.create', compact('rols'));
+        return view('superadmin.users.create', compact('rols'));
         
     }
 
@@ -81,7 +81,7 @@ class UserController extends Controller
     {
         $user = User::find($id); 
         $rols = Rol::orderBy('name', 'ASC') -> pluck('name', 'id'); 
-        return view('users.edit', compact('user', 'rols')); 
+        return view('superadmin.users.edit', compact('user', 'rols')); 
     }
 
     /**

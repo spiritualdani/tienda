@@ -25,7 +25,7 @@ class ProductSaleController extends Controller
 
         $sales = Sale::orderBy('id', 'ASC')->pluck('id', 'user_id'); 
 
-        return view('products_sales.index', compact('products_sales', 'sales', 'sale'));
+        return view('superadmin.products_sales.index', compact('products_sales', 'sales', 'sale'));
     }
 
     /**
@@ -42,7 +42,7 @@ class ProductSaleController extends Controller
 
        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id'); 
 
-    return view('products_sales.create', compact('sale', 'products')); 
+    return view('superadmin.products_sales.create', compact('sale', 'products')); 
     }
 
     /**
@@ -99,7 +99,7 @@ class ProductSaleController extends Controller
         $product_sale = ProductSale::find($id);
 
         $products = Product::orderBy('name', 'ASC')->pluck('name', 'id'); 
-        return view('products_sales.edit', compact('product_sale', 'products',''));
+        return view('superadmin.products_sales.edit', compact('product_sale', 'products',''));
     }
 
     /**

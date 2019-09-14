@@ -30,7 +30,7 @@ class RolController extends Controller
     {
         $rols = Rol::orderBy('name', 'ASC')->get();
      
-        return view('rols.index', compact('rols'));
+        return view('superadmin.rols.index', compact('rols'));
     }
 
     /**
@@ -40,7 +40,7 @@ class RolController extends Controller
      */
     public function create()
     {
-        return view('rols.create');
+        return view('superadmin.rols.create');
     }
 
     /**
@@ -80,7 +80,7 @@ class RolController extends Controller
     {
         $rol  = Rol::find($id); 
 
-        return view('rols.edit', compact('rol'));
+        return view('superadmin.rols.edit', compact('rol'));
 
     }
 
@@ -119,6 +119,6 @@ class RolController extends Controller
             $rol->delete(); 
         }
 
-        return redirect('rols');
+        return redirect('/rols');
     }
 }
