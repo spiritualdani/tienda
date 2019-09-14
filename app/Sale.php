@@ -22,6 +22,12 @@ class Sale extends Model
 
     }
 
+    public function client() 
+    {
+        return $this->belongsTo('App\Client');
+
+    }
+
     public function products_sales()
     {
         return $this->hasMany('App\ProductSale'); 

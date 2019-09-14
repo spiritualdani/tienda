@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Cashier;
 
 use Illuminate\Http\Request;
-use App\Category;
+use App\Http\Controllers\Controller;
 
-class CategoryController extends Controller
+class SaleCashierController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +14,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        // 
-        $categories = Category::orderBy('name','ASC')->get(); 
-        return view('superadmin.categories.index', compact('categories'));
+        
+        
     }
 
     /**
@@ -26,7 +25,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('superadmin.categories.create'); 
+        //
     }
 
     /**
@@ -37,14 +36,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:categories,name|max:50',
-          
-        ]);
-
-        $category = Category::create($request -> all()); 
-
-        return redirect('categories');
+        //
     }
 
     /**
@@ -66,8 +58,7 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        $category = Category::find($id); 
-        return view('superadmin.categories.edit', compact('category'));
+        //
     }
 
     /**
@@ -79,18 +70,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $category = Category::find($id);
-        $request->validate([
-            
-            'name' => 'required|unique:categories,name,'.$category->name.',name|max:50',
-         
-
-        ]);   
-
-        $category->fill($request->all());
-        $category ->save();    
-
-        return redirect('categories');
+        //
     }
 
     /**
@@ -101,12 +81,6 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $category = Category::find($id); 
-        if($category){
-            $category->delete(); 
-
-        }
-
-        return redirect('categories'); 
+        //
     }
 }

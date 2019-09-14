@@ -20,10 +20,21 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::middleware(['auth', 'super'])->group(function () {
-	Route::resource('rols','RolController'); 
-	Route::resource('users','UserController');
-	Route::resource('categories', 'CategoryController'); 
-	Route::resource('products', 'ProductController'); 
-	Route::resource('sales', 'SaleController'); 
-	Route::resource('sales.products_sales', 'ProductSaleController'); 
+	Route::resource('rols','Admin\RolController'); 
+	Route::resource('users','Admin\UserController');
+	Route::resource('categories', 'Admin\CategoryController'); 
+	Route::resource('products', 'Admin\ProductController'); 
+	Route::resource('sales', 'Admin\SaleController'); 
+	Route::resource('sales.products_sales', 'Admin\ProductSaleController'); 
 });
+
+Route::middleware(['auth'])->group(function () {
+	Route::resource('rols','Cashier\RolController'); 
+	Route::resource('users','Cashier\UserController');
+	Route::resource('categories', 'Cashier\CategoryController'); 
+	Route::resource('products', 'Cashier\ProductController'); 
+	Route::resource('sales', 'Cashier\SaleController'); 
+	Route::resource('sales.products_sales', 'Cashier\ProductSaleController'); 
+});
+
+
