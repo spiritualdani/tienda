@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Sale; 
 use App\User; 
 use App\ProductSale; 
+use App\Client;
 class SaleController extends Controller
 {
     /**
@@ -50,8 +51,27 @@ class SaleController extends Controller
         $request->validate([
             'user_id' => 'required', 
             'description' => 'required',
+            'name' => 'required', 
+            'ci' => 'required', 
+      
+
+
         ]); 
 
+        $client=Client::where('ci',$request->ci)->first(); 
+
+        if($client){
+
+            $client->fill($request->all());
+
+            $client->save(); 
+        }
+        else{
+             $client=Client::create($request->all());
+        }
+        
+
+        $request['client_id']=$client->id;
 
         $request['total_amount']= 0 ;  // Agregar elementos 
        

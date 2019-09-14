@@ -29,6 +29,7 @@
                     <thead>
                         <tr>
                             <td>User</td>
+                            <td>Client</td>
                             <!--<td>CI</td>-->  
                             <td>Description</td>
                             <td>Total Amount</td>
@@ -44,6 +45,16 @@
                             <tr>
                                 <td>{{ $sale->user->id}}</td>
                                 <!--<td>{{ $sale->user->ci}}</td>-->
+                                <td>
+                                
+                                @if($sale->client)        
+                                    {{  $sale->client->id }}
+                                
+                                @else
+                                    -
+                                @endif
+
+                                </td>
                                 <td>{{ $sale->description }}</td>
                                 <td>{{ $sale->total_amount }}</td>
                                

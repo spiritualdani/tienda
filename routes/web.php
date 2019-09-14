@@ -26,15 +26,13 @@ Route::middleware(['auth', 'super'])->group(function () {
 	Route::resource('products', 'Admin\ProductController'); 
 	Route::resource('sales', 'Admin\SaleController'); 
 	Route::resource('sales.products_sales', 'Admin\ProductSaleController'); 
+
+
+
 });
 
 Route::middleware(['auth'])->group(function () {
-	Route::resource('rols','Cashier\RolController'); 
-	Route::resource('users','Cashier\UserController');
-	Route::resource('categories', 'Cashier\CategoryController'); 
-	Route::resource('products', 'Cashier\ProductController'); 
-	Route::resource('sales', 'Cashier\SaleController'); 
-	Route::resource('sales.products_sales', 'Cashier\ProductSaleController'); 
+	
 });
 
 
