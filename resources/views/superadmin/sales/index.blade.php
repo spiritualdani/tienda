@@ -43,12 +43,12 @@
 
                         @foreach($sales as $sale)
                             <tr>
-                                <td>{{ $sale->user->id}}</td>
+                                <td>{{ $sale->user->name}}</td>
                                 <!--<td>{{ $sale->user->ci}}</td>-->
-                                <td>
+                                <td> 
                                 
                                 @if($sale->client)        
-                                    {{  $sale->client->id }}
+                                    {{  $sale->client->name }}
                                 
                                 @else
                                     -
@@ -93,7 +93,7 @@
                     <tfoot>
 
                         <tr >
-                            <td colspan="2" class="text-left; font-weight-bold">TOTAL: </td>
+                            <td colspan="3" class="text-left; font-weight-bold">TOTAL: </td>
                             <!--<td>CI</td>-->  
                             <td  class="text-right font-weight-bold" >{{$count_total}}</td>
                             <td></td>

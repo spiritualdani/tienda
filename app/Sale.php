@@ -13,7 +13,9 @@ class Sale extends Model
     protected $fillable = [
     	'total_amount',
     	'description',
-    	'user_id',
+    	'client_id',
+        'user_id',
+
     ]; 
 
     public function user() 
@@ -33,3 +35,7 @@ class Sale extends Model
         return $this->hasMany('App\ProductSale'); 
     }
 }
+
+
+
+      

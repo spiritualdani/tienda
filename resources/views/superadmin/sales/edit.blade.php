@@ -35,6 +35,13 @@
                 <label>CI:</label>
                 {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  -->
 
+
+                <label>Client:</label>
+                {!! Form::select('client_id', $clients, null,['class' => 
+                'form-control', 'required' => 'required']) !!}  
+
+                
+
                 <label>Description:</label>
                 {!! Form::textarea('description', null,['class' => 'form-control', 'required' => 'required']) !!}  
                 

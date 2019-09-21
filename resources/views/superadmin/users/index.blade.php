@@ -44,6 +44,7 @@
                                 <td>{{ $user->ci }}</td>
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user-> email }} </td>
+                                <td>{{ $user-> username }}</td>
                                 <td>{{ $user-> rol->name }}</td>
 
 
@@ -56,15 +57,12 @@
                                     {!! Form::submit('Delete',['class'=>'btn btn-sm btn-danger'])!!}
                                     {!! Form::close()!!}
 
-                                </td>
-
-                                <td><a href="users/{{$user->id}}/clients">
+                                    <a href="users/{{$user->id}}/clients">
                                     
-                                     <button class="btn btn-sm btn-info" style="float:left; margin-right: 15px;">Clients</button>
+                                     <button class="btn btn-sm btn-info" style="float:left; margin-left: 15px;">Clients</button>
                                     </a>
+
                                 </td>
-
-
 
                             </tr>
 

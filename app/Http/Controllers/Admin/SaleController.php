@@ -37,7 +37,8 @@ class SaleController extends Controller
     {
 
         $users = User::orderBy('name', 'ASC') -> pluck('name', 'id'); 
-        return view('superadmin.sales.create', compact('users')); 
+        $clients = Client::orderBy('name', 'ASC') -> pluck('name', 'id');
+        return view('superadmin.sales.create', compact('users', 'clients')); 
     }
 
     /**
@@ -50,14 +51,12 @@ class SaleController extends Controller
     {
         $request->validate([
             'user_id' => 'required', 
-            'description' => 'required',
-            'name' => 'required', 
-            'ci' => 'required', 
-      
-
-
+            'client_id' => 'required',
+            'description' => 'required'
+    
         ]); 
 
+        /*
         $client=Client::where('ci',$request->ci)->first(); 
 
         if($client){
@@ -73,8 +72,10 @@ class SaleController extends Controller
 
         $request['client_id']=$client->id;
 
+        */
+
         $request['total_amount']= 0 ;  // Agregar elementos 
-       
+
         $sale = Sale::create($request->all());
           
         return redirect('sales');
@@ -101,7 +102,8 @@ class SaleController extends Controller
     {
         $sale = Sale::find($id);
         $users = User::orderBy('name', 'ASC') -> pluck('name', 'id'); 
-        return view('superadmin.sales.edit', compact('sale', 'users'));
+        $clients = Client::orderBy('name', 'ASC') -> pluck('name', 'id');
+        return view('superadmin.sales.edit', compact('sale', 'users','clients'));
 
     }
 

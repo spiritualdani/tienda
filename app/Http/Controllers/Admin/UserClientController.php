@@ -49,7 +49,7 @@ class UserClientController extends Controller
         $request->validate([
             'user_id' => 'required', 
             'name' => 'required', 
-            'ci' => 'required', 
+            'ci' => 'required|unique:clients,ci', 
             'phone' => 'required'
 
         ]);

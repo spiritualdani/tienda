@@ -34,19 +34,11 @@
                 {!! Form::select('user_id', $users, null,['class' => 
                 'form-control', 'required' => 'required']) !!}  
 
-                
-                <label>Name:</label>
-                {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
 
-                <label>CI:</label>
-                {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  
+                <label>Client:</label>
+                {!! Form::select('client_id', $clients, null,['class' => 
+                'form-control', 'required' => 'required']) !!}  
 
-                <label>Phone:</label>
-                {!! Form::text('phone', null,['class' => 'form-control', 'required' => 'required']) !!}  
-               
-                <!--
-                <label>CI:</label>
-                {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  -->
 
                 <label>Description:</label>
                 {!! Form::textarea('description', null,['class' => 'form-control', 'required' => 'required']) !!}   
