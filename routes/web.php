@@ -26,7 +26,7 @@ Route::middleware(['auth', 'super'])->group(function () {
 	Route::resource('products', 'Admin\ProductController'); 
 	Route::resource('sales', 'Admin\SaleController'); 
 	Route::resource('sales.products_sales', 'Admin\ProductSaleController'); 
-
+	Route::resource('users.clients', 'Admin\UserClientController'); 
 
 
 });

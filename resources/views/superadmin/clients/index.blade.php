@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">Users</div>
+                <div class="card-header">Clients</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -16,55 +16,46 @@
                 </div>
 
                 <div class="text-right"> 
-                    <a href="{{ url('users/create') }}">
+                    <a href="/users/{{$user->id}}/clients/create">
                         <button  class="btn btn-sm btn-success"> + New
                             
 
                         </button>
                     </a>
 
+
                 </div>
 
                 <table class="table table-striped table-bordered" id="myTable">
                     <thead>
                         <tr>
+                            <td>User</td>
                             <td>Name</td>
                             <td>CI</td>
                             <td>Phone</td>
-                            <td>Email</td>
-                            <td>Username</td>
-                            <td>Rol</td>
                             <td>Actions</td>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($users as $user)
+                        @foreach($clients as $client)
                             <tr>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->ci }}</td>
-                                <td>{{ $user->phone }}</td>
-                                <td>{{ $user-> email }} </td>
-                                <td>{{ $user-> rol->name }}</td>
+                                <td>{{ $client->user->name}}</td>
+                                <td>{{ $client->name }}</td>
+                                <td>{{ $client->ci }}</td>
+                                <td>{{ $client->phone }}</td>
+                           
+    
 
 
-                                <td><a href="/users/{{$user->id}}/edit">
+                                <td><a href="/users/{{$client->user->id}}/clients/{{$client->id}}/edit">
                                     <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Edit</button>
                                     </a>
                                     
-                                    {!! Form::open(['url'=> '/users/'.$user->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete user")', 'style' => 'float:left'])!!}
-
+                                    {!! Form::open(['url'=> '/users/'.$client->user->id.'/clients/'.$client->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete client")', 'style' => 'float:left'])!!}
                                     {!! Form::submit('Delete',['class'=>'btn btn-sm btn-danger'])!!}
                                     {!! Form::close()!!}
 
                                 </td>
-
-                                <td><a href="users/{{$user->id}}/clients">
-                                    
-                                     <button class="btn btn-sm btn-info" style="float:left; margin-right: 15px;">Clients</button>
-                                    </a>
-                                </td>
-
-
 
                             </tr>
 

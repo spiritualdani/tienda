@@ -64,10 +64,6 @@
                               
                                     {!! Form::open(
                                         ['url'=> '/sales/'.$product_sale->sale->id.'/products_sales/'.$product_sale->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete user")', 'style' => 'float:left'])!!}
-
-
-            
-                                 
                                     {!! Form::submit('Delete',['class'=>'btn btn-sm btn-danger'])!!}
                                     {!! Form::close()!!}
 
