@@ -15,6 +15,8 @@
                     @endif
                 </div>
 
+                <!--
+
                 <div class="text-right"> 
                     <a href="{{ url('products/create') }}">
                         <button  class="btn btn-sm btn-success"> + New
@@ -24,7 +26,7 @@
                     </a>
 
                 </div>
-
+                -->
                 <table class="table table-striped table-bordered" id="myTable">
                     <thead>
                         <tr>
@@ -52,6 +54,8 @@
 
                                 </td>
 
+                                <!--
+
                                 <td><a href="/products/{{$product->id}}/edit">
                                     <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Edit</button>
                                     </a>
@@ -62,6 +66,7 @@
                                     {!! Form::close()!!}
 
                                 </td>
+                            -->
 
                             </tr>
 

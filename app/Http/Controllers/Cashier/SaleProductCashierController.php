@@ -4,24 +4,27 @@ namespace App\Http\Controllers\Cashier;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
-use App\Product;
 use App\Sale;
-use Illuminate\Support\Facades\Auth;
+use App\ProductSale;
 
-class SaleCashierController extends Controller
+class SaleProductCashierController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($sale_id)
     {
+        $sale = Sale::find($sale_id); 
+            
+        //dd($sale->id);
 
-        $user = Auth::user();   
-        $sales = Sale::where('user_id', $user->id)->get(); 
-        return view('cashier.sales.index', compact('sales')); 
+        $products_sales = ProductSale::where('sale_id', $sale->id)->get();
+
+        $sales = Sale::orderBy('id', 'ASC')->pluck('id', 'user_id'); 
+
+        return view('cashier.sales_products.index', compact('products_sales', 'sales', 'sale'));
     }
 
     /**

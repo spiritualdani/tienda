@@ -125,7 +125,6 @@ class UserClientController extends Controller
         if($client){
             $client->delete();
         }
-
         return redirect('/users/'.$user_id.'/clients');
 
     }
