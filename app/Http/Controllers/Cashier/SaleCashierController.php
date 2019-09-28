@@ -31,7 +31,7 @@ class SaleCashierController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**

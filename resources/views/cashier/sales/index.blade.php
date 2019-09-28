@@ -5,6 +5,36 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
+                <div class="card-header">New Client</div>
+                
+                {!! Form::open(['url' => 'sales', 'files'=>true])!!}   
+
+
+                <label>Name:</label>
+                {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
+
+                <label>CI:</label>
+                {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  
+
+                <label>Phone:</label>
+                {!! Form::text('phone', null,['class' => 'form-control', 'required' => 'required']) !!}  
+               
+                <!--
+                <label>Description:</label>
+                {!! Form::textarea('description', null,['class' => 'form-control', 'required' => 'required']) !!}   
+                -->
+                <!--
+                <label>Total amount:</label>
+                {!! Form::number('total_amount', null,['class' => 'form-control', 'required' => 'required']) !!}  -->
+ 
+                <div class="text-center"></div>
+                    {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
+                    
+                {!! Form::close()!!}
+
+
+
+
                 <div class="card-header">Sales</div>
 
                 <div class="card-body">

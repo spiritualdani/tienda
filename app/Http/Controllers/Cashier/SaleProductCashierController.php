@@ -17,14 +17,16 @@ class SaleProductCashierController extends Controller
     public function index($sale_id)
     {
         $sale = Sale::find($sale_id); 
-            
-        //dd($sale->id);
 
+        $user = Auth::user();
+
+        $clients = Client::where('user_id', $user->id)->get(); 
+    
         $products_sales = ProductSale::where('sale_id', $sale->id)->get();
 
         $sales = Sale::orderBy('id', 'ASC')->pluck('id', 'user_id'); 
 
-        return view('cashier.sales_products.index', compact('products_sales', 'sales', 'sale'));
+        return view('cashier.sales_products.index', compact('products_sales', 'sales', 'sale', 'user', 'clients'));
     }
 
     /**
