@@ -61,7 +61,7 @@ class SaleCashierController extends Controller
         $request->validate([
             'name' => 'required',
             'ci' => 'required',
-            'product_id' => 'required',
+            'products_id' => 'required',
             'quantity' => 'required',
             'description' => 'required',
 
@@ -83,18 +83,29 @@ class SaleCashierController extends Controller
         else {
             $client = Client::create($request->all()); 
         }
-            
+            ////
             $request['client_id'] =  $client->id;
-            $sale = Sale::create($request->all());
-            $request['sale_id'] = $sale->id;
-            $product = Product::find($request->product_id);
-            $request['amount'] = $request->amount + $product->prize; 
-            $sale->total_amount = $sale->total_amount + $request->amount;
-            $sale->save();
 
-            $product_sale = ProductSale::create($request->all());
-        
-        return redirect('/cashier/sales');
+            $sale = Sale::create($request->all());
+
+            /////
+            $request['sale_id'] = $sale->id;
+
+            foreach($request->products_id as $product_id){
+
+                $product = Product::find($product_id);
+
+                $request['product_id'] = $product_id;
+
+                $request['amount'] = $request->quantity * $product->prize; 
+
+                $sale->total_amount = $sale->total_amount + $request->amount;
+
+                $product_sale = ProductSale::create($request->all());
+            }
+
+                $sale->save();
+                return redirect('/cashier/sales');
     
     }
 

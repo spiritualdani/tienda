@@ -37,7 +37,7 @@
                 {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  
 
                 <label>Product:</label>
-                {!! Form::select('product_id',$products, null,['class' => 'form-control', 'required' => 'required']) !!}
+                {!! Form::select('products_id[]',$products, null,['class' => 'form-control', 'required' => 'required']) !!}
 
                 <label>Quantity:</label>
                 {!! Form::number('quantity',null,['class' => 'form-control', 'required' => 'required']) !!}
