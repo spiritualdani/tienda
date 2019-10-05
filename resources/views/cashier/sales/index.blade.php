@@ -5,11 +5,38 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
+
                 <div class="card-header">New Client</div>
+
+                @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                    </div>
+                @endif
+               
+
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <div class="card-body">
+
+              
                 
-                {!! Form::open(['url' => 'sales', 'files'=>true])!!}   
+                {!! Form::open(['url' => 'cashier/sales_clients', 'files'=>true])!!} 
 
+                <label>User:</label>
+                {!! Form::text('user_id', $user->name, null,['class' => 
+                'form-control', 'required' => 'required']) !!}  
 
+                <br>
                 <label>Name:</label>
                 {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
 
@@ -19,42 +46,47 @@
                 <label>Phone:</label>
                 {!! Form::text('phone', null,['class' => 'form-control', 'required' => 'required']) !!}  
                
-                <!--
+                <div class="text-center"></div>
+                    {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
+                    
+                {!! Form::close()!!}
+
+                </div>
+
+
+
+                <div class="card-header">New Sale</div>
+
+                <div class="card-body">
+
+
+                {!! Form::open(['url' => '/cashier/sales', 'files'=>true])!!}   
+
+
+                <label>User:</label>
+                {!! Form::text('user_id', $user->id, null,['class' => 
+                'form-control', 'required' => 'required']) !!}  
+                <br>
+
+                <label>Client:</label>
+                {!! Form::select('client_id', $clients, null,['class' => 
+                'form-control', 'required' => 'required', 'placeholder' => 'take a client']) !!}  
+
                 <label>Description:</label>
                 {!! Form::textarea('description', null,['class' => 'form-control', 'required' => 'required']) !!}   
-                -->
-                <!--
-                <label>Total amount:</label>
-                {!! Form::number('total_amount', null,['class' => 'form-control', 'required' => 'required']) !!}  -->
+                
  
                 <div class="text-center"></div>
                     {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
                     
                 {!! Form::close()!!}
 
+                </div>    
+ 
 
 
+               <div class="card-header">Sales</div>
 
-                <div class="card-header">Sales</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-                </div>
-                <!--
-                <div class="text-right"> 
-                    <a href="{{ url('sales/create') }}">
-                        <button  class="btn btn-sm btn-success" style="float:right; margin-right: 0px; margin-bottom: 25px;"> + New
-                            
-
-                        </button>
-                    </a>
-
-                </div>
-                -->
                 <table class="table table-striped table-bordered" id="myTable">
                     <thead>
                         <tr>
@@ -94,7 +126,7 @@
                                 
                                 <td>
                                     <a href="/cashier/sales/{{$sale->id}}/sales_products">
-                                    <button class="btn btn-sm btn-info" style="float:left; margin-right: 15px;">Product Sale</button>
+                                    <button class="btn btn-sm btn-info" style="float:left; margin-right: 15px;">Sale Product</button>
                                     </a>
                                 </td>
                                 

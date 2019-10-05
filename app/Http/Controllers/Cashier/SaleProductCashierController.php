@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Sale;
 use App\ProductSale;
+use App\Product; 
+use Illuminate\Support\Facades\Auth;
 
 class SaleProductCashierController extends Controller
 {
@@ -16,17 +18,19 @@ class SaleProductCashierController extends Controller
      */
     public function index($sale_id)
     {
+
         $sale = Sale::find($sale_id); 
 
         $user = Auth::user();
 
-        $clients = Client::where('user_id', $user->id)->get(); 
+        // $clients = Client::where('user_id', $user->id)->get(); 
     
         $products_sales = ProductSale::where('sale_id', $sale->id)->get();
 
-        $sales = Sale::orderBy('id', 'ASC')->pluck('id', 'user_id'); 
+        // $sales = Sale::orderBy('id', 'ASC')->pluck('id', 'user_id'); 
 
-        return view('cashier.sales_products.index', compact('products_sales', 'sales', 'sale', 'user', 'clients'));
+        return view('cashier.sales_products.index', compact('products_sales', 'sale', 'user'));
+
     }
 
     /**
@@ -34,9 +38,13 @@ class SaleProductCashierController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($sale_id)
     {
-        //
+        $sale = Sale::find($sale_id);
+        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id');  
+
+        return view('cashier.sales_products.create', compact('sale', 'products')); 
+
     }
 
     /**
@@ -45,9 +53,30 @@ class SaleProductCashierController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store($sale_id, Request $request)
     {
-        //
+
+        $request->validate([
+            'sale_id' => 'required',
+            'product_id' => 'required', 
+            'quantity' => 'required'
+        ]);
+
+        $product = Product::find($request->product_id); 
+        $sale = Sale::find($sale_id);
+        // $sale = Sale::find($request->sale_id);
+
+        $request['amount'] = $request->quantity * $product->prize; 
+        $sale->total_amount = $sale->total_amount + $request->amount; 
+
+        $sale->save();
+
+        $product_sale = ProductSale::create($request->all());
+
+        return redirect('/cashier/sales/'.$product_sale->sale_id.'/sales_products');
+
+
+
     }
 
     /**
@@ -67,9 +96,14 @@ class SaleProductCashierController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($sale_id, $id)
     {
-        //
+        $sale = Sale::find($sale_id);
+        $product_sale = ProductSale::find($id);
+        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id');
+
+        return view('cashier.sales_products.edit', compact('sale', 'product_sale', 'products')); 
+
     }
 
     /**
@@ -79,9 +113,28 @@ class SaleProductCashierController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($sale_id, Request $request, $id)
     {
-        //
+        $request->validate([
+            'sale_id' => 'required', 
+            'product_id' => 'required', 
+            'quantity' => 'required'
+
+        ]);
+
+        $product_sale = ProductSale::find($id);
+        $product = Product::find($request->product_id);
+        $sale = Sale::find($sale_id);
+
+        $old_amount = $product_sale->amount; 
+        $request['amount'] = $request->quantity * $product->prize; 
+        $sale->total_amount = $sale->total_amount - $old_amount + $request->amount; 
+        $sale->save();
+
+        $product_sale->fill($request->all());
+        $product_sale->save();
+        return redirect('/cashier/sales/'.$product_sale->sale_id.'/sales_products');
+
     }
 
     /**
@@ -90,8 +143,19 @@ class SaleProductCashierController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($sale_id, $id)
     {
-        //
+
+        $product_sale = ProductSale::find($id); 
+        if($product_sale)
+        {
+            $sale = Sale::find($sale_id); 
+            $sale->total_amount = $sale->total_amount - $product_sale->amount; 
+            $sale->save();
+            $product_sale->delete();
+        }
+
+        return redirect('/cashier/sales/'.$sale_id.'/sales_products');
+
     }
 }

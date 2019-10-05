@@ -35,6 +35,7 @@ Route::middleware(['auth', 'cashier'])->prefix('cashier')->group(function () {
 	Route::get('products','Cashier\ProductCashierController@index'); 
 	Route::resource('sales','Cashier\SaleCashierController');
 	Route::resource('sales.sales_products', 'Cashier\SaleProductCashierController');
+	Route::resource('sales_clients', 'Cashier\SaleClientCashierController');
 });
 
 

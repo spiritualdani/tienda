@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
-
-use App\Http\Controllers\Controller; 
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Sale; 
@@ -27,7 +25,7 @@ class ProductSaleController extends Controller
 
         $sales = Sale::orderBy('id', 'ASC')->pluck('id', 'user_id'); 
 
-        return view('superadmin.products_sales.index', compact('products_sales', 'sales', 'sale'));
+        return view('products_sales.index', compact('products_sales', 'sales', 'sale'));
     }
 
     /**
@@ -44,7 +42,7 @@ class ProductSaleController extends Controller
 
        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id'); 
 
-    return view('superadmin.products_sales.create', compact('sale', 'products')); 
+    return view('products_sales.create', compact('sale', 'products')); 
     }
 
     /**
@@ -101,7 +99,7 @@ class ProductSaleController extends Controller
         $product_sale = ProductSale::find($id);
 
         $products = Product::orderBy('name', 'ASC')->pluck('name', 'id'); 
-        return view('superadmin.products_sales.edit', compact('product_sale', 'products','sale'));
+        return view('products_sales.edit', compact('product_sale', 'products',''));
     }
 
     /**
@@ -118,7 +116,6 @@ class ProductSaleController extends Controller
         $sale = Sale::find($request->sale_id); 
       
         $product_sale = ProductSale::find($id); 
-
         $request->validate([
             'sale_id' => 'required', 
             'product_id' => 'required',
@@ -130,14 +127,7 @@ class ProductSaleController extends Controller
 
         $request['amount'] = $request->quantity * $product->prize;
        
-        /**
-        if($old_amount < $request->amount){
-            $sale->total_amount = $sale->total_amount - $old_amount + $request->amount;
-        }
-        else 
-            {
-                $sale->total_amount = $sale->total_amount - $old_amount + $request->amount;
-            }*/
+
 
         $sale->total_amount = $sale->total_amount - $old_amount + $request->amount;
     

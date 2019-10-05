@@ -14,9 +14,7 @@
                         </button>
                     </a>
 
-                    <!--
-
-                    <a href="/sales/{{$sale->id}}/products_sales/create">
+                    <a href="/cashier/sales/{{$sale->id}}/sales_products/create">
                     
                         <button  class="btn btn-sm btn-success" style="float:right; margin-right: 0px; margin-bottom: 0px;"> + New
                             
@@ -24,7 +22,6 @@
                         </button>
                     </a>
 
-                -->
                 </div>
                 <div class="card-header">Product Sales</div>
 
@@ -48,9 +45,8 @@
                             <td>Product</td>
                             <td>Quantity</td>
                             <td>Amount</td>
-                            <!--
                             <td>Actions</td>
-                            -->
+                        
                         </tr>
                     </thead>
                     <tbody>
@@ -62,18 +58,18 @@
                                 <td>{{ $product_sale->quantity }}</td>
                                 <td>{{ $product_sale->amount }} </td>
                            
-                                <!--
-                                <td><a href="/sales/{{$product_sale->sale->id}}/products_sales/{{$product_sale->id}}/edit">
+                                
+                                <td><a href="/cashier/sales/{{$product_sale->sale->id}}/sales_products/{{$product_sale->id}}/edit">
                                     <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px;">Edit</button>
                                     </a>
                               
                                     {!! Form::open(
-                                        ['url'=> '/sales/'.$product_sale->sale->id.'/products_sales/'.$product_sale->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete user")', 'style' => 'float:left'])!!}
+                                        ['url'=> 'cashier/sales/'.$product_sale->sale->id.'/sales_products/'.$product_sale->id, 'method'=> 'DELETE', 'onsubmit'  =>' return confirm("Are you sure to delete user")', 'style' => 'float:left'])!!}
                                     {!! Form::submit('Delete',['class'=>'btn btn-sm btn-danger'])!!}
                                     {!! Form::close()!!}
 
                                 </td>
-                                -->
+                                
                             </tr>
 
                         @endforeach

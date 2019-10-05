@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Cashier;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
 use App\Product;
 use App\Sale;
 use App\Client; 
 use Illuminate\Support\Facades\Auth;
 
-class SaleCashierController extends Controller
+class SaleClientCashierController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,15 +18,7 @@ class SaleCashierController extends Controller
      */
     public function index()
     {
-
-        $user = Auth::user();   
-
-        $clients = Client::where('user_id', $user->id)->orderBy('name', 'ASC') -> pluck('name', 'id');
-
-        $sales = Sale::where('user_id', $user->id)->get();  
-        return view('cashier.sales.index', compact('sales', 'user', 'clients')); 
-
-
+        
     }
 
     /**
@@ -37,10 +28,7 @@ class SaleCashierController extends Controller
      */
     public function create()
     {
-        /*    
-        $user = Auth::user(); 
-        $clients = Client::where('user_id', $user->id)->orderBy('name', 'ASC')->get();
-        return view('cashier.sales.create', compact('user', 'clients')); */
+        //
     }
 
     /**
@@ -51,21 +39,19 @@ class SaleCashierController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user(); 
+
 
         $request->validate([
-            'user_id' => 'required', 
-            'client_id' => 'required', 
-            'description' => 'required'
+        'name' => 'required', 
+        'ci' => 'required|unique:clients,ci', 
+        'phone' => 'required'
         ]);
 
+        $request['user_id'] = $user->id;  
 
-        $request['total_amount'] = 0; 
-
-        $sale = Sale::create($request->all());
-
-        return redirect('/cashier/sales');
- 
-      
+        $client = Client::create($request->all());
+        return redirect('cashier/sales'); 
     }
 
     /**
@@ -110,14 +96,6 @@ class SaleCashierController extends Controller
      */
     public function destroy($id)
     {
-        $sale = Sale::find($id);
-
-        if($sale)
-        {
-            $product_sale = ProductSale::where('sale_id', $sale->id)->delete();
-            $sale->delete();
-        }
-
-        return redirect('/cashier/sales');
+        //
     }
 }
