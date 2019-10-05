@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Product;
 use App\Sale;
 use App\Client; 
+use App\ProductSale;
 use Illuminate\Support\Facades\Auth;
 
 class SaleCashierController extends Controller
@@ -24,8 +25,10 @@ class SaleCashierController extends Controller
 
         $clients = Client::where('user_id', $user->id)->orderBy('name', 'ASC') -> pluck('name', 'id');
 
+        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id');
+
         $sales = Sale::where('user_id', $user->id)->get();  
-        return view('cashier.sales.index', compact('sales', 'user', 'clients')); 
+        return view('cashier.sales.index', compact('sales', 'user', 'clients', 'products')); 
 
 
     }
@@ -58,21 +61,17 @@ class SaleCashierController extends Controller
         $request->validate([
             'name' => 'required',
             'ci' => 'required',
+            'product_id' => 'required',
+            'quantity' => 'required',
             'description' => 'required',
+
         ]);
 
-        
-        // $client = Client::find($request->ci); // solo colocar llave primaria,  ********
-        // 
-        // $sales = Sale::where('user_id', $user->id)->orderBy('name', 'ASC');
-
-        // $client = Client::where('user_id', $user->id)->where('id', $request->client_id)->orderBy('name', 'ASC')->first();
-
-        // $client = Client::where('user_id', $user->id)->orderBy('name', 'ASC')->first();
 
         $client = Client::where('ci', $request->ci)->first(); 
 
-        $request['user_id'] = $user->id;    
+        $request['user_id'] = $user->id; 
+
         $request['total_amount'] = 0;
 
         if($client){
@@ -87,6 +86,13 @@ class SaleCashierController extends Controller
             
             $request['client_id'] =  $client->id;
             $sale = Sale::create($request->all());
+            $request['sale_id'] = $sale->id;
+            $product = Product::find($request->product_id);
+            $request['amount'] = $request->amount + $product->prize; 
+            $sale->total_amount = $sale->total_amount + $request->amount;
+            $sale->save();
+
+            $product_sale = ProductSale::create($request->all());
         
         return redirect('/cashier/sales');
     

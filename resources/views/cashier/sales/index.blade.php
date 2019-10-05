@@ -36,6 +36,11 @@
                 <label>CI:</label>
                 {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  
 
+                <label>Product:</label>
+                {!! Form::select('product_id',$products, null,['class' => 'form-control', 'required' => 'required']) !!}
+
+                <label>Quantity:</label>
+                {!! Form::number('quantity',null,['class' => 'form-control', 'required' => 'required']) !!}
 
                 <label>Description:</label>
                 {!! Form::textarea('description', null,['class' => 'form-control', 'required' => 'required']) !!} 
