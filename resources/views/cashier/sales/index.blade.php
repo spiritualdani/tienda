@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="card">
 
-                <div class="card-header">New Client</div>
+                <div class="card-header">New Sale</div>
 
                 @if (session('status'))
                     <div class="alert alert-success" role="alert">
@@ -26,16 +26,9 @@
                     </div>
                 @endif
 
-                <div class="card-body">
-
-              
+                <div class="card-body">  
                 
-                {!! Form::open(['url' => 'cashier/sales_clients', 'files'=>true])!!} 
-
-                <label>User:</label>
-                {!! Form::text('user_id', $user->name, null,['class' => 
-                'form-control', 'required' => 'required']) !!}  
-
+                {!! Form::open(['url' => 'cashier/sales', 'files'=>true])!!} 
                 <br>
                 <label>Name:</label>
                 {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
@@ -43,38 +36,10 @@
                 <label>CI:</label>
                 {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  
 
-                <label>Phone:</label>
-                {!! Form::text('phone', null,['class' => 'form-control', 'required' => 'required']) !!}  
-               
-                <div class="text-center"></div>
-                    {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
-                    
-                {!! Form::close()!!}
-
-                </div>
-
-
-
-                <div class="card-header">New Sale</div>
-
-                <div class="card-body">
-
-
-                {!! Form::open(['url' => '/cashier/sales', 'files'=>true])!!}   
-
-
-                <label>User:</label>
-                {!! Form::text('user_id', $user->id, null,['class' => 
-                'form-control', 'required' => 'required']) !!}  
-                <br>
-
-                <label>Client:</label>
-                {!! Form::select('client_id', $clients, null,['class' => 
-                'form-control', 'required' => 'required', 'placeholder' => 'take a client']) !!}  
 
                 <label>Description:</label>
-                {!! Form::textarea('description', null,['class' => 'form-control', 'required' => 'required']) !!}   
-                
+                {!! Form::textarea('description', null,['class' => 'form-control', 'required' => 'required']) !!} 
+
  
                 <div class="text-center"></div>
                     {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}

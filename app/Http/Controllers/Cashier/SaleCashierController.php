@@ -37,7 +37,8 @@ class SaleCashierController extends Controller
      */
     public function create()
     {
-        /*    
+
+        /*
         $user = Auth::user(); 
         $clients = Client::where('user_id', $user->id)->orderBy('name', 'ASC')->get();
         return view('cashier.sales.create', compact('user', 'clients')); */
@@ -51,21 +52,44 @@ class SaleCashierController extends Controller
      */
     public function store(Request $request)
     {
+       
+        $user = Auth::user();  
 
         $request->validate([
-            'user_id' => 'required', 
-            'client_id' => 'required', 
-            'description' => 'required'
+            'name' => 'required',
+            'ci' => 'required',
+            'description' => 'required',
         ]);
 
+        
+        // $client = Client::find($request->ci); // solo colocar llave primaria,  ********
+        // 
+        // $sales = Sale::where('user_id', $user->id)->orderBy('name', 'ASC');
 
-        $request['total_amount'] = 0; 
+        // $client = Client::where('user_id', $user->id)->where('id', $request->client_id)->orderBy('name', 'ASC')->first();
 
-        $sale = Sale::create($request->all());
+        // $client = Client::where('user_id', $user->id)->orderBy('name', 'ASC')->first();
 
+        $client = Client::where('ci', $request->ci)->first(); 
+
+        $request['user_id'] = $user->id;    
+        $request['total_amount'] = 0;
+
+        if($client){
+
+            $client->fill($request->all());
+            $client->save();   
+           
+        }
+        else {
+            $client = Client::create($request->all()); 
+        }
+            
+            $request['client_id'] =  $client->id;
+            $sale = Sale::create($request->all());
+        
         return redirect('/cashier/sales');
- 
-      
+    
     }
 
     /**
