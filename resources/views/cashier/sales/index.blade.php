@@ -135,7 +135,7 @@
 
         $('#ci').keyup(function(){
             $.ajax({
-                url: '{{ url('cashier/sales/get_client')}}'+ '/'+$('#ci').val(), 
+                url: "{{ url('cashier/sales/get_client')}}"+ "/"+$('#ci').val(), 
                 type: 'GET', 
                 data: {}, 
                 success: function(response){
