@@ -1,0 +1,136 @@
+
+/*Cuerpo*/
+body{
+	background-color: rgba(166,247,241, 1);
+	padding: 0px;
+}
+
+/*Titulo*/
+.titulo{
+	background-color: rgba(229,236,235, 1);
+	justify-content: center;
+	padding:20px;
+}
+
+
+
+.titulo>h1{
+	color:black;
+	font-style: normal;
+
+}
+
+/*Barra de Navegación*/
+.navegacion{
+	background-color: rgba(255,255,255, 1);
+
+}
+
+.navegacion>div>ul>li>div>a{
+
+	color:blue;
+	font-style: italic;
+}
+
+.navegacion>div>ul>li>a{
+	font-size: 20px;
+	font-style: initial;
+}
+
+
+
+/*Contenedor para una fila*/
+.contenedor-cuadros {
+	display: flex;
+	justify-content: center;
+}
+
+/*Subcontenedor para una fila*/
+
+.subcontenedor-cuadros {
+	margin-top:  40px;
+	margin-bottom: 40px;
+	padding:40px;
+	display:inline-flex;
+	justify-content: center;
+}
+
+/* Cuadro de sombra */
+.caja1 {
+	margin-top: 0px;
+	background-color: rgba(244,70,14, 0.1) ;
+	width:200px;
+	height: 200px;
+	border-radius: 20px 20px 20px 20px;
+
+}
+
+/* Cuadro de texto sobrepuesto */
+.caja2 {
+	background-color: rgba(244,70,14, 0.5);
+	margin-top: 50px;
+	margin-left: -100px;
+	padding:20px;
+	width:200px;
+	height: 200px;
+	border-radius: 20px 20px 20px 20px;
+	text-align: center;
+	font-size:40px;
+}
+
+/* Tarjetas para las imagenes */
+.card {
+	margin: 50px;
+	border: 1px solid #000000 ;
+	padding: 20px;
+}
+
+/* Imagenes dentro de las tarjetas*/
+
+img {
+	width:200px;
+	height: 150px;
+	padding: 10px;
+	border: 1px solid #000000 ;
+}
+
+/* Barra de Navegacion de Items */
+
+.navItem1{
+	background-color: #5de5de;
+	color:white;
+}
+
+.navItem2{
+	background-color: #2698b6;
+	color:white;
+}
+
+.navItem3{
+	background-color: #1e4e5a;
+	color:white;
+}
+
+.textItem1{
+	background-color: #5de5de;
+	color:white;
+}
+
+.textItem2{
+	background-color: #2698b6;
+	color:white;
+}
+.textItem3{
+	background-color: #1e4e5a;
+	color:white;
+}
+
+/* Boton de enlace */
+
+.botonEnlace {
+	background-color: rgba(0,0,0, 1);
+	color:white;
+	margin:20px;
+}
+
+
