@@ -146,33 +146,34 @@
 			<div class="card">
 
 				<div class="image">
-					<img src="img/paisaje1.jpg">
+					
+					<img src="{{asset('img/Leche-Evaporada-pil-Cremosa-400g.jpg')}}">
 				</div>
 					
 				<div class="card-body">
-					<p>Paisaje 1</p>
+					<p>Leche evaporada cremosa</p>
 				</div>
 			</div>
 
 			<div class="card">
 
 				<div class="image">
-					<img src="img/paisaje2.jpg">
+					<img src="{{asset('img/pura-vida-alimento-lacteo-Evaporado-400g-300x300.jpg')}}">
 				</div>
 					
 				<div class="card-body">
-					<p>Paisaje 2</p>
+					<p>Alimento Lacteo Evaporado</p>
 				</div>
 			</div>
 
 			<div class="card">
 
 				<div class="image">
-					<img src="img/paisaje3.jpg">
+					<img src="{{asset('img/Leche-Fresca-Natural-sachet-946-ml.jpg')}}">
 				</div>
 					
 				<div class="card-body">
-					<p>Paisaje 3</p>
+					<p>Leche fresca natural</p>
 				</div>
 			</div>
 		</div>

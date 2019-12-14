@@ -25,6 +25,9 @@ Route::middleware(['auth', 'super'])->group(function () {
 	Route::resource('categories', 'Admin\CategoryController'); 
 	Route::resource('products', 'Admin\ProductController'); 
 	Route::resource('sales', 'Admin\SaleController'); 
+
+	Route::get('sales/get_client/{ci}', 'Admin\SaleController@get_client');
+
 	Route::resource('sales.products_sales', 'Admin\ProductSaleController'); 
 	Route::resource('users.clients', 'Admin\UserClientController'); 
 

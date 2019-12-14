@@ -144,4 +144,20 @@ class SaleController extends Controller
       
         return redirect('sales');  //redirigir a ruta users
     }
+
+    public function get_client($ci)
+    {
+
+        $client = Client::where('ci', $ci)->first();
+
+        if($client){
+            $name=$client->name; 
+        }
+        else
+        {
+            $name="";
+        }
+        return $name; 
+    
+    }
 }
