@@ -31,7 +31,7 @@
                 {!! Form::open(['url' => 'cashier/sales', 'files'=>true])!!} 
                 <br>
                 <label>Name:</label>
-                {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
+                {!! Form::text('name', null,['id'=>'name', 'class' => 'form-control', 'required' => 'required']) !!}
 
                 <label>CI:</label>
                 {!! Form::text('ci', null,['id'=>'ci','class' => 'form-control', 'required' => 'required']) !!}  
@@ -134,9 +134,15 @@
     $(document).ready( function () {
 
         $('#ci').keyup(function(){
-        console.log($('#ci').val());
+            $.ajax({
+                url: '{{ url('cashier/sales/get_client')}}'+ '/'+$('#ci').val(), 
+                type: 'GET', 
+                data: {}, 
+                success: function(response){
+                    $('#name').val(response);
+                }
+            }); 
          }); 
-
         $('#myTable').DataTable();
         
     });
