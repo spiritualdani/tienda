@@ -138,6 +138,5 @@
     </div>
 
    @yield('scripts')   <!--  Vamos a crear una nueva seccion  -->
-
 </body>
 </html>

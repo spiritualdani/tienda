@@ -161,4 +161,20 @@ class SaleCashierController extends Controller
 
         return redirect('/cashier/sales');
     }
+
+    public function get_client($ci)
+    {
+
+        $client = Client::where('ci', $ci)->first();
+
+        if($client){
+            $name=$client->name; 
+        }
+        else
+        {
+            $name="";
+        }
+        return $name; 
+    
+    }
 }

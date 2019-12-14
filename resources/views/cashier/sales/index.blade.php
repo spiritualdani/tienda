@@ -34,7 +34,7 @@
                 {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
 
                 <label>CI:</label>
-                {!! Form::text('ci', null,['class' => 'form-control', 'required' => 'required']) !!}  
+                {!! Form::text('ci', null,['id'=>'ci','class' => 'form-control', 'required' => 'required']) !!}  
 
                 <label>Product:</label>
                 {!! Form::select('products_id[]',$products, null,['class' => 'form-control', 'required' => 'required']) !!}
@@ -132,9 +132,17 @@
 
 <script type="text/javascript"> 
     $(document).ready( function () {
-    $('#myTable').DataTable();
-    } );
+
+        $('#ci').keyup(function(){
+        console.log($('#ci').val());
+         }); 
+
+        $('#myTable').DataTable();
+        
+    });
  </script>
 
 @endsection 
+
+
 
