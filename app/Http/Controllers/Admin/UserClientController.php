@@ -109,7 +109,7 @@ class UserClientController extends Controller
 
 
         $clientX = Client::where('id', '!=', $id)->where('ci', $request->ci)->toSql();
-        dd($clientX);
+    
         if($clientX) 
             {
                 return redirect()->back();

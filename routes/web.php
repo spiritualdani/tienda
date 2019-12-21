@@ -11,13 +11,19 @@
 |
 */
 
+/*
 Route::get('/', function () {
-    return view('welcome3');
+
+
+    //return view('welcome3');
+
 });
+*/
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@front');
 
 Route::middleware(['auth', 'super'])->group(function () {
 	Route::resource('rols','Admin\RolController'); 

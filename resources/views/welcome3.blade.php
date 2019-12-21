@@ -142,42 +142,23 @@
 
 		</div>
 
-		<div class="row contenedor-cuadros">
-			<div class="card">
+		<div class="row contenedor-cuadros" >
 
-				<div class="image">
-					
-					<img src="{{asset('img/Leche-Evaporada-pil-Cremosa-400g.jpg')}}">
-				</div>
-					
-				<div class="card-body">
-					<p>Leche evaporada cremosa</p>
-				</div>
-			</div>
+			@foreach($products as $product)
 
 			<div class="card">
 
 				<div class="image">
-					<img src="{{asset('img/pura-vida-alimento-lacteo-Evaporado-400g-300x300.jpg')}}">
+					
+					<img src="{{asset('img/products/'.$product->picture)}}">
 				</div>
 					
 				<div class="card-body">
-					<p>Alimento Lacteo Evaporado</p>
+					<p>{{ $product->name }}</p>
 				</div>
 			</div>
 
-			<div class="card">
-
-				<div class="image">
-					<img src="{{asset('img/Leche-Fresca-Natural-sachet-946-ml.jpg')}}">
-				</div>
-					
-				<div class="card-body">
-					<p>Leche fresca natural</p>
-				</div>
-			</div>
-		</div>
-
+			@endforeach
 
 
 		<div class="row">
