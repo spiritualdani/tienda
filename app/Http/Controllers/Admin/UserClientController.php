@@ -108,13 +108,11 @@ class UserClientController extends Controller
         ]);
 
 
-        $clientX = Client::where('ci', $request->ci)->first();
-
+        $clientX = Client::where('id', '!=', $id)->where('ci', $request->ci)->toSql();
+        dd($clientX);
         if($clientX) 
             {
-                $user = User::find($user_id); 
-                $client = Client::find($id); 
-                return view('superadmin.clients.edit', compact('user', 'client'));
+                return redirect()->back();
             }
 
         else 
