@@ -98,15 +98,28 @@ class UserClientController extends Controller
         $client = Client::find($id); 
 
         $request->validate([
-            'user_id' => 'required', 
+
             'name' => 'required', 
-            'ci' => 'required|unique:clients,ci', 
+            'ci' => 'required|unique:clients,ci,'.$request->ci.',ci',  // $request->ci excepto 
             'phone' => 'required'
 
         ]);
 
+
+        $clientX = Client::where('ci', $request->ci)->first();
+
+        if($clientX) 
+            {
+                $user = User::find($user_id); 
+                $client = Client::find($id); 
+                return view('superadmin.clients.edit', compact('user', 'client'));
+            }
+
+        else 
+        {
         $client->fill($request->all()); 
         $client->save(); 
+        }
 
         return redirect('/users/'.$client->user_id.'/clients'); 
 

@@ -30,10 +30,6 @@
                     ['url'=>'users/'.$client->user_id.'/clients/'.$client->id, 'method'=>'PUT', 'files'=>true]) !!}
 
 
-                <label>User:</label>
-                {!! Form::text('user_id', $user->id, null,['class' => 
-                'form-control', 'required' => 'required']) !!}  
-                <br>
                 <label>Name:</label>
                 {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
                 
