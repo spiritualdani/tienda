@@ -47,12 +47,14 @@ class UserClientController extends Controller
     {
 
         $request->validate([
-            'user_id' => 'required', 
+ 
             'name' => 'required', 
             'ci' => 'required|unique:clients,ci', 
             'phone' => 'required'
 
         ]);
+
+        $request['user_id'] = $user_id;
 
         $client = Client::create($request->all());  
         return redirect('/users/'.$client->user_id.'/clients');

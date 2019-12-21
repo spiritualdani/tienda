@@ -28,10 +28,7 @@
 
                 {!! Form::open(['url' => 'users/'.$user->id.'/clients', 'files'=>true])!!}   
                 
-                <label>User:</label>
-                {!! Form::text('user_id', $user->id, null,['class' => 
-                'form-control', 'required' => 'required']) !!}  
-                <br>
+
                 <label>Name:</label>
                 {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required']) !!}
                 
