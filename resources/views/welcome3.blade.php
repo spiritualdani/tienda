@@ -146,10 +146,11 @@
 
 			@foreach($products as $product)
 
-			<div class="card">
+			<div class="col-md-4">
+
+			<div class="card" style="width:300px">
 
 				<div class="image">
-					
 					<img src="{{asset('img/products/'.$product->picture)}}">
 				</div>
 					
@@ -158,9 +159,11 @@
 				</div>
 			</div>
 
+			</div>
+
 			@endforeach
 
-
+		</div>
 		<div class="row">
 			<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
 				  <li class="nav-item">
@@ -205,7 +208,7 @@
 
 	</div>
 
-	</div>
+	
 
 	</div>
 	<script src="{{asset('js/jquery-3.3.1.slim.min.js')}}"></script>
