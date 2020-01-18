@@ -37,13 +37,62 @@
                 {!! Form::text('ci', null,['id'=>'ci','class' => 'form-control', 'required' => 'required']) !!}  
 
                 <label>Product:</label>
-                {!! Form::select('products_id[]',$products, null,['class' => 'form-control', 'required' => 'required']) !!}
+
+
+                <div class="row contenedor-cuadros" >
+
+ 
+
+                    @foreach($products as $product)
+
+                    <div class="col-md-3">
+
+                    <div class="card" style="width:300px">
+
+                        <div class="image">
+                            <img src="{{asset('img/products/'.$product->picture)}}">
+                        </div>
+                            
+                        <div class="card-body">
+                            <p class="text-center">{{ $product->name }}</p>
+
+                            <div class="row">
+                            <div class="col-md-6">
+                                <button id="sum" type="button" class="btn btn-sm btn-success" style="float:center; margin-right: 30px; margin-right: 0px;" onclick="add_product('{{$product->id}}')">+</button>
+                                <button id="res" type="button" class="btn btn-sm btn-danger" style="float:right; margin-left: 20px;"  onclick="sub_product('{{$product->id}}')">-</button>
+
+                            </div>
+                            </div>
+
+                            <div >
+                                {!! Form::number('quantity',0,['class' => 'form-control', 'id' => 'product_'.$product->id, 'disabled' => 'disabled' ]) !!}
+                            </div>
+
+                        </div>  
+
+                       
+
+                    </div>
+
+                    </div>
+
+                     
+
+                    @endforeach
+
+                </div>  
+
+                <!-- {!! Form::select('products_id[]',$products, null,['class' => 'form-control', 'required' => 'required']) !!} -->
+
+                <!--
 
                 <label>Quantity:</label>
-                {!! Form::number('quantity',null,['class' => 'form-control', 'required' => 'required']) !!}
+                {!! Form::number('quantity', null,['class' => 'form-control', 'required' => 'required']) !!}
+
+                -->
 
                 <label>Description:</label>
-                {!! Form::textarea('description', null,['class' => 'form-control', 'required' => 'required']) !!} 
+                {!! Form::textarea('description', null,['class' => 'form-control']) !!} 
 
  
                 <div class="text-center"></div>
@@ -131,6 +180,35 @@
 @section('scripts')
 
 <script type="text/javascript"> 
+
+
+
+        function add_product(product_id)
+        {
+
+            valor = parseInt($('#product_' + product_id).val());  
+            valor = valor + 1; 
+            $('#product_' + product_id).val(valor); 
+
+        }
+
+        function sub_product(product_id)
+        {
+
+            if($('#product_' + product_id).val() == 0) 
+            {
+                $('#product_' + product_id).val(0);  
+            }
+            else{
+                valor = $('#product_' + product_id).val(); 
+                valor = valor - 1; 
+                $('#product_' + product_id).val(valor);
+            }
+            
+           
+
+        }
+
     $(document).ready( function () {
 
         $('#ci').keyup(function(){
@@ -142,7 +220,33 @@
                     $('#name').val(response);
                 }
             }); 
-         }); 
+         });
+
+
+
+        /*
+
+        $('#sum').on('click', function(){
+            $sumador = $sumador + 1; 
+            $('#quantity').attr('value', $sumador);  
+        }); 
+
+        $('#res').on('click',function(){ 
+                $sumador = $sumador - 1; 
+                if($('#quantity').attr('value') == 0) 
+                {
+                    $sumador = 0;
+                    $('#quantity').attr('value', $sumador);
+                }
+                else
+                {
+                    $('#quantity').attr('value', $sumador); 
+                }      
+            
+        })
+
+        */
+        
         $('#myTable').DataTable();
         
     });

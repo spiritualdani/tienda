@@ -24,10 +24,13 @@ class SaleCashierController extends Controller
         $user = Auth::user();   
 
         $clients = Client::where('user_id', $user->id)->orderBy('name', 'ASC') -> pluck('name', 'id');
-
+        /*
         $products = Product::orderBy('name', 'ASC')->pluck('name', 'id');
+        */
 
+        $products = Product::orderBy('name', 'ASC')->get();
         $sales = Sale::where('user_id', $user->id)->get();  
+
         return view('cashier.sales.index', compact('sales', 'user', 'clients', 'products')); 
 
 
