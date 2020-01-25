@@ -65,7 +65,9 @@
                             </div>
 
                             <div >
-                                {!! Form::number('quantity',0,['class' => 'form-control', 'id' => 'product_'.$product->id, 'disabled' => 'disabled' ]) !!}
+                                {!! Form::hidden('quantity', $product->id.',0',['class' => 'form-control', 'id' => 'product_'.$product->id,'disabled' => 'disabled']) !!} 
+
+                                {!! Form::number('wind',0,['class' => 'form-control', 'id' => 'wind_'.$product->id,'disabled' => 'disabled' ]) !!} 
                             </div>
 
                         </div>  
@@ -185,28 +187,57 @@
 
         function add_product(product_id)
         {
-
+            /*
             valor = parseInt($('#product_' + product_id).val());  
-            valor = valor + 1; 
+            valor = valor + 1;  
             $('#product_' + product_id).val(valor); 
+            */
+
+            var text = $('#product_' + product_id).val();
+            textArray = text.split(','); 
+            console.log(textArray);
+            textArray[1] = parseInt(textArray[1]) + 1; 
+            console.log(textArray);
+            $('#product_' + product_id).val(textArray[0] + ',' + textArray[1]); 
+
+            $('#wind_'+ product_id).val(textArray[1]);
 
         }
 
         function sub_product(product_id)
         {
-
+            /*
             if($('#product_' + product_id).val() == 0) 
             {
                 $('#product_' + product_id).val(0);  
+
+
             }
             else{
+
+
                 valor = $('#product_' + product_id).val(); 
                 valor = valor - 1; 
                 $('#product_' + product_id).val(valor);
             }
-            
-           
+            */
 
+            var text = $('#product_' + product_id).val();
+            textArray = text.split(','); 
+            if(textArray[1] == '0')    
+            {
+                $('#product_' + product_id).val(textArray[0] + ',' + textArray[1]); 
+
+                $('#wind_'+ product_id).val(textArray[1]); 
+            }
+
+            else 
+            {
+                textArray[1] = parseInt(textArray[1]) - 1; 
+                $('#product_' + product_id).val(textArray[0] + ',' + textArray[1]); 
+
+                $('#wind_'+ product_id).val(textArray[1]);
+            }
         }
 
     $(document).ready( function () {
