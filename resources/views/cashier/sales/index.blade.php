@@ -65,7 +65,7 @@
                             </div>
 
                             <div >
-                                {!! Form::hidden('quantity', $product->id.',0',['class' => 'form-control', 'id' => 'product_'.$product->id,'disabled' => 'disabled']) !!} 
+                                {!! Form::hidden('quantity[]', $product->id.',0',['class' => 'form-control', 'id' => 'product_'.$product->id]) !!} 
 
                                 {!! Form::number('wind',0,['class' => 'form-control', 'id' => 'wind_'.$product->id,'disabled' => 'disabled' ]) !!} 
                             </div>

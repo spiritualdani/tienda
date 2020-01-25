@@ -64,8 +64,8 @@ class SaleCashierController extends Controller
         $request->validate([
             'name' => 'required',
             'ci' => 'required',
-            'products_id' => 'required',
-            'quantity' => 'required',
+            //'products_id' => 'required',
+            //'quantity' => 'required',
             'description' => 'required',
 
         ]);
@@ -75,7 +75,8 @@ class SaleCashierController extends Controller
 
         $request['user_id'] = $user->id; 
 
-        $request['total_amount'] = 0;
+        $request['total_amount'] = 0;  
+
 
         if($client){
 
@@ -94,6 +95,8 @@ class SaleCashierController extends Controller
             /////
             $request['sale_id'] = $sale->id;
 
+            /*
+
             foreach($request->products_id as $product_id){
 
                 $product = Product::find($product_id);
@@ -106,6 +109,44 @@ class SaleCashierController extends Controller
 
                 $product_sale = ProductSale::create($request->all());
             }
+
+            */
+
+
+
+
+            foreach($request->quantity as $quantum)
+            {
+                $quantum = explode(',', $quantum); 
+
+                $product = Product::find((int)$quantum[0]);
+
+                //$request['product_id'] = $product->id;
+
+
+
+                //$request['amount'] = (int)$quantum[1] * $product->prize; 
+                $quantity = $quantum[1] + 0;
+
+            
+                $amount = ($quantum[1] + 0 ) * $product->prize; 
+
+
+
+                $sale->total_amount = $sale->total_amount + $amount;  
+
+
+                $product_sale = ProductSale::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => $product->id,
+                        'quantity' => $quantity, 
+                        'amount' => $amount 
+                    ]);
+
+
+
+            }
+
 
                 $sale->save();
                 return redirect('/cashier/sales');
