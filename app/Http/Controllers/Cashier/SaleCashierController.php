@@ -117,7 +117,14 @@ class SaleCashierController extends Controller
 
             foreach($request->quantity as $quantum)
             {
+
+
                 $quantum = explode(',', $quantum); 
+
+
+                if((int)$quantum[1] != 0)
+
+                {
 
                 $product = Product::find((int)$quantum[0]);
 
@@ -143,10 +150,9 @@ class SaleCashierController extends Controller
                         'amount' => $amount 
                     ]);
 
-
+                }
 
             }
-
 
                 $sale->save();
                 return redirect('/cashier/sales');
