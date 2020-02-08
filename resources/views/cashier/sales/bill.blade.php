@@ -69,7 +69,7 @@
 		</table>
 
 
-		<p><b>Date: </b> {{$fecha}} </p>
+		<p><b>Date: </b> {{$sale->created_at}} </p>
 
  	
 		
