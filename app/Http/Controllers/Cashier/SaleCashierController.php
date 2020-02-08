@@ -10,6 +10,7 @@ use App\Sale;
 use App\Client; 
 use App\ProductSale;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade as PDF; 
 
 class SaleCashierController extends Controller
 {
@@ -226,5 +227,11 @@ class SaleCashierController extends Controller
         }
         return $name; 
     
+    }
+
+    public function bill($id)
+    {
+        $pdf = PDF::loadView('cashier.sales.bill');
+        return $pdf -> stream(); // Nos dara como un archivo de descarga 
     }
 }

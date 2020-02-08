@@ -148,7 +148,17 @@
                                 <td>
                                     <a href="/cashier/sales/{{$sale->id}}/sales_products">
                                     <button class="btn btn-sm btn-info" style="float:left; margin-right: 15px;">Sale Product</button>
+                                    </a >  
+                                    <a href="{{'sales/'.$sale->id.'/bill'}}" target="_blank">
+                                    
+                                    <!-- <a href="/cashier/sales/{{$sale->id}}/bill">   -->
+                                        
+                                        <button class="btn btn-sm btn-secondary" style="float:center"> Bill
+                                            
+                                        </button>
+
                                     </a>
+
                                 </td>
                                 
                             </tr>
@@ -253,7 +263,14 @@
             }); 
          });
 
+        /*
 
+        $('#submit').keyup(function(){
+
+
+        }); 
+
+        */
 
         /*
 
