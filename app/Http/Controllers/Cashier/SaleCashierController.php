@@ -11,6 +11,7 @@ use App\Client;
 use App\ProductSale;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade as PDF; 
+use Carbon\Carbon; 
 
 class SaleCashierController extends Controller
 {
@@ -230,8 +231,12 @@ class SaleCashierController extends Controller
     }
 
     public function bill($id)
-    {
-        $pdf = PDF::loadView('cashier.sales.bill');
+    { 
+        $fecha = Carbon::now()->toDateTimeString();
+        $sale = Sale::find($id);    
+        $products_sales = ProductSale::where('sale_id',$sale->id)->get(); 
+        
+        $pdf = PDF::loadView('cashier.sales.bill', compact('sale', 'products_sales', 'fecha'))->setPaper('letter', 'landscape');
         return $pdf -> stream(); // Nos dara como un archivo de descarga 
     }
 }
