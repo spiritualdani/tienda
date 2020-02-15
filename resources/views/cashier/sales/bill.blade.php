@@ -29,18 +29,9 @@
 <body>
 
 	<h3>LLAJTA MILK S.A.</h3> 
-
 	<p>---------------------------</p>
-	<p>{{$qr}}</p>
-
-	<div>
-
-	<img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(200)->generate($qr)) !!} ">
-
-	</div>
+	<img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(150)->generate($qr)) !!} ">
 	<p>---------------------------</p>
-
-
 	<p>SUBSIDIARY: </p> 
 	<p>ADDRESS: {{$sale->description}} </p>
 	<p>PHONES: 4200124 Int. 122</p>
