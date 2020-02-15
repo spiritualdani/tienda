@@ -235,8 +235,11 @@ class SaleCashierController extends Controller
         $fecha = Carbon::now()->toDateTimeString();
         $sale = Sale::find($id);    
         $products_sales = ProductSale::where('sale_id',$sale->id)->get(); 
+        $nameInterprise = "LLAJTA MILK"; 
+
+        $qr = $nameInterprise."|".$sale->user->name."|".$sale->client->ci."|".$sale->client->name."|".$sale->total_amount."|".$sale->created_at;  
         
-        $pdf = PDF::loadView('cashier.sales.bill', compact('sale', 'products_sales', 'fecha'))->setPaper('letter', 'landscape');
+        $pdf = PDF::loadView('cashier.sales.bill', compact('sale', 'products_sales', 'fecha', 'qr'));
         return $pdf -> stream(); // Nos dara como un archivo de descarga 
     }
 }
