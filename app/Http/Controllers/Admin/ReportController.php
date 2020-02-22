@@ -17,53 +17,59 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $periods = ['day', 'week', 'month', 'year', 'another...'];  
-                    $users_t = User::orderBy('name', 'ASC')->pluck('name', 'id');
-                    $users = array();
-                    $users[0] = "all";
-                    $sales = null;  
+                    $users = User::orderBy('name', 'ASC')->pluck('name', 'id');
 
+                    //$users = array();
+                    //$users[0] = "all";
                     
+
+                    /*
                     foreach($users_t as $index=>$user_t)
                     {
                         $users[$index] = $user_t;
                     }
+                    */
+                        
+                        //dd($request->all());
+                    if(isset($request->period)){
 
-                        
-                        
-                    if($request->user){
                         $period = $request->period;
-                        $user_id = $request->user; 
-                      
+                              
 
-                        $date = Carbon::now()->toDateTimeString();
-                        $date = substr($date,0,10);
+                        if(isset($request->user))
+                        {
+                            $user_id = $request->user; 
+                        }
+                        else 
+                        {
+                            $user_id = null; 
+                        } 
 
+                        switch($period) {
+                            
+                            case 0: 
+                                
 
-                            switch($period) {
-                                case 0: 
                                     //echo "Day"; 
-                                    if($user_id == "0")
+                                    $date = Carbon::now()->toDateTimeString();
+                                    $date = substr($date,0,10);
+                                    if($user_id)
+                                    {
+
+                                        $sales = Sale::whereDate('created_at',$date)->where('user_id', $user_id)->get(); 
+
+                                    }
+                                    else
                                     {
 
                                         $sales = Sale::whereDate('created_at',$date)->get();
-
-                                        dd($sales);
+                                    }
 
                                         return view('superadmin.reports.index', compact('periods','users','sales'));
-                                    }
-                                    else{
-                                        $sales = Sale::whereDate('created_at',$date)->where('user_id', $user_id)->get(); 
-
-                                        return view('superadmin.reports.index', compact('periods','users','sales'));    
-                                    }
-
-                                    
-                                            
-                                    // $name = User::selectedUser($period, $date, $sales, $user); 
-                                          
+                                               
                                     break; 
 
-                                case 1: 
+                            case 1: 
                                             //echo "Week"; 
                                         if($user_id == "0")
                                         {
@@ -82,16 +88,16 @@ class ReportController extends Controller
 
                                         break; 
 
-                                case 2: 
+                            case 2: 
                                             //echo "Month"; 
                                             $name = User::selectedUser($period, $date, $sales, $user);  
                                             break; 
 
-                                case 3: 
+                            case 3: 
                                             //echo "Year"; 
                                             $name = User::selectedUser($period, $date, $sales, $user);  
                                             break; 
-                                case 4: 
+                            case 4: 
                                             //echo "Another"; 
                                             break;
 
@@ -100,6 +106,8 @@ class ReportController extends Controller
 
                         return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
                     } 
+
+                     $sales = null; 
                    
                         return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
                     

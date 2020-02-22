@@ -20,7 +20,7 @@
                                 {!! Form::select('period',$periods, null, ['id' => 'period','class' => 'form-control']) !!}
 
                                 <label>Users:</label>
-                                {!! Form::select('user',$users, null, ['id' => 'user', 'class'=> 'form-control']) !!}
+                                {!! Form::select('user',$users, null, ['id' => 'user', 'class'=> 'form-control', 'placeholder' => 'all']) !!}
 
                                 @if ($sales)
                                 <hr>
