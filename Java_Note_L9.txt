@@ -1,0 +1,22 @@
+	array(['0'] => 'elemento',
+		['1'] => 'elemento2',
+		['4']=> 'elemento3',
+		
+	)
+
+
+	
+
+	foreach( $users as $index => $u)
+	{
+	<option value	
+	}
+
+	pluck: se da posiciones index manualmente 
+	
+
+
+
+
+	EMPEZAR DE NUEVO 
+	• Desde la funcion index 

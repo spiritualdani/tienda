@@ -1,0 +1,3927 @@
+
+PROYECTO 
+	• REQUERIMIENTOS 
+		○ Pagina principal para ver los productos / agregar, editar
+		○ Ruta de los detalles de cada producto
+		○ Acceso de los usuarios a la plataforma
+		○ Listado de compras y listado usuarios 
+		○ Inventario 
+		(rols, users, clients, products, categories, providers, sales)
+			►rols: id, name; 
+			►users: id, rol_id, name, ci, phone, email, username, password;
+		
+			►sales: id, user_id, description, total_amount; 
+
+			►categories: id, name; 
+			►products: id, category_id, name, description, quantity, prize, picture 
+ 			
+			►sales_products: id, sale_id, product_id, quantity, amount, 			
+					  	
+		
+		proovedores: id, RUT, nombre, direccion, telefonos 
+		ventas: id, fecha*, cliente,  descuento*, monto  
+
+	• DESARROLLO 
+		○ Crear proyecto en  /h/Formacion/OneAcademy/Base_Datos/Laravel_Home/
+			► composer create-project --prefer-dist laravel/laravel Supermarket 
+
+		○ Habilitar librerías 
+			► composer install
+
+		○ Generar ruta de authenticación (login) // Despues de crear la migración 
+			► php artisan make:auth 
+		○ Crear base de datos 
+			► supermarket 
+		○ Cambiar los atributos de conexion del archivo .env 
+	
+			DB_CONNECTION=mysql
+			DB_HOST=127.0.0.1
+			DB_PORT=3306
+			DB_DATABASE=supermarket
+			DB_USERNAME=root
+			DB_PASSWORD=
+		○ Actualizar despues de modificar archivos 
+			► php artisan cache:clear
+			► php artisan config:cache 
+
+		○ Realizar la migración modificando archivo migrations/create_users_table.php 
+			(importar DB)
+			► use Illuminate\Support\Facades\DB;
+			(insertamos datos a las tablas para usuario admin) 
+			
+		○ Modificar nominaciones en config/database.php 
+			► 'charset' => 'utf8'
+			► 'collation' => 'utf8_unicode_ci'
+			► php artisan cache:clear
+			► php artisan config:cache 
+
+		○ Migrar las tablas creadas 
+			► php artisan migrate 
+
+		○ Crear authentication 
+			► composer require laravel/ui --dev 
+			► php artisan ui vue --auth 
+
+		○ Crear modelos 
+			(Crear Rol)
+			► php artisan make:model Rol  
+			(Crear para User, Category, Product, Sale, SaleProduct)
+	
+		○ Crear relaciones 
+			(funcions belongsTo(), hasMany())
+			nota: revisar en la base de datos "diseñadores" para las relaciones 
+		○ Modificar vistas 
+			(fuente: https://laravelcollective.com/)
+			► $composer require laravelcollective/html 
+			► $php artisan cache:clear
+			► $php artisan config:cache 
+
+			(en vista app.blade.php) 
+			► despues de @else   
+			<li>
+                                <a href="#" class="nav-link">Rols</a>
+                         </li>
+			(modificamos en <a id="navbarDropdown"> )
+			►   {{ Auth::user()->username }} 
+		VISTA ROLES 
+		○ Crear vista para roles 
+			► Crear carpeta views/rols 
+			► Añadir archivo index.blade 
+		○ Crear Controlador para rols 
+			► php artisan make:controller RolController --resource 
+		○ Agregar ruta para roles routes/web.php 
+			► Route::resource('rols', 'RolController'); 
+
+		○ En el archivo RolController.php 
+			(importar modelo Rol) 
+			► use App\Rol; 
+			(En la función index()) 
+			► 
+			   	$rols = Rol::orderBy('name', 'ASC')->get();
+        			dd($rols);
+        			return view('rols.index', compact('rols'));
+
+		○ En el archivo app.blade.php 
+			(modificar la ruta del elemento <a> para Rols) 
+			►  <a href="{{url('/rols')}}" class="nav-link">Rols</a>	
+
+		○ En el archivo rols/index.blade.php 
+			(cambiar el titulo de la class="card-header") 
+			►     <div class="card-header">Rols</div>
+			(dentro de class="card-body" crear tabla) 
+			► 
+			        <table class="table table-stripped table-bordered">
+                       	 		<thead>
+                            		<tr>    
+                                		<td>Names</td>
+                                		<td>Actions</td>
+                            		</tr>
+                        		</thead>
+                        		<tbody>
+                            			@foreach($rols as $rol)
+                            			<tr>
+                                			<td>{{$rol->name}}</td>
+                                			<td> ---- </td>
+                            			</tr>
+
+                            			@endforeach
+                        		</tbody>
+                    		</table>
+
+		CREAR ROLES 
+		○ AÑADIR archivo a rols/create.blade.php 
+			(modificar titulo)
+			►  <div class="card-header"> Rol / New </div>
+			(añadir formulario en class="card-body") 
+			► 
+				{!! Form::open(['url' => 'rols']) !!}
+                    		<label>Name:</label>
+                    		{!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    		<div class="text-center">
+                    		{!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    		{!! Form::close() !!}
+				</div>
+
+		○ Modificar funcion create() 
+			► return view('rols.create');
+		
+		○ Modificar la funcion store() 
+			► 
+				$request->validate([
+            			'name' => 'required|unique:rols,name|max:50', 
+        			]);
+
+        			$rol = Rol::create($request->all());
+        			return redirect('/rols');
+
+		EDITAR ROLES 
+		○ Crear boton para editar roles en index.blade.php 
+			► 
+				<td><a href="{{ url('rols/'.$rol->id.'/edit')}}">
+                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                    </a> 
+                                </td>
+
+		○ Añadir archivo a rols\edit.blade.php 
+			(Modificar class="card-header") 
+			►   <div class="card-header"> Rol / Edit </div>
+			(Agregar formulario para modificar)
+			► 
+				{!! Form::model($rol, ['url' => 'rols/'.$rol->id, 'method'=>'PUT']) !!}
+                    		<label>Name:</label>
+                    		{!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    		<div class="text-center" style="margin-top: 20px">
+                    		{!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    		{!! Form::close() !!}
+				</div>
+
+		○ Modificar la funcion edit() 	 
+			► 
+			$rol = Rol::find($id);
+        		return view('rols.edit', compact('rol'));
+		○ Modificar la funcion update() 
+			► 
+			        $request->validate([
+           			 'name' => 'required|unique:rols,name|max:50',
+        			]);
+
+ 			       	$rol = Rol::find($id);
+        			$rol->fill($request->all());
+        			$rol->save();
+
+        			return redirect('/rols');
+
+		ELIMINAR ROL 
+		○ Añadir formulario de eliminación en index.blade.php 
+			► 
+			{!! Form::open(['url' => 'rols/'.$rol->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                        confirm("Are sure to delete rol")', 'style' => 'float:left']) !!}
+
+                        {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                        {!! Form::close()!!}
+			
+		○ Modificar la funcion destroy() 
+			► 
+			        $rol = Rol::find($id); 
+       				 if($rol){
+            			$rol->delete();
+       				 }
+
+        			return redirect('/rols');
+
+		VISTAS DE TABLAS 
+		○ en app.blade.php añadimos 
+			► 
+			<script src="https://code.jquery.com/jquery-3.4.1.min.js" sync></script>
+
+    			<link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+    			<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" defer></script>
+
+		○ En el archivo app.blade.php 
+			(antes del </body>)
+			►   @yield('scripts')
+		○ En el archivo index.blade.php 
+			(añadimos nueva seccion)
+			► 
+				
+			@section('scripts')
+
+			<script type="text/javascript">
+    			$(document).ready( function(){
+        			$('#myTable').DataTable();
+    			});
+
+			</script>
+			@endsection
+			(añadimos id="myTable" a la tabla) 
+			► id="myTable"
+
+	
+		VISTA USUARIOS 
+		○ Crear vista para users  
+			► Crear carpeta views/users 
+			► Añadir archivo index.blade 
+		○ Crear Controlador para users  
+			► php artisan make:controller UserController --resource 
+		○ Agregar ruta para users routes/web.php 
+			► Route::resource('users', 'UserController');
+
+		○ En el archivo app.blade.php 
+			(modificar la ruta del elemento <a> para Rols) 
+			►  <a href="{{url('/users')}}" class="nav-link">Users</a> 
+
+		○ En el archivo UserController.php 
+			(importar modelo User) 
+			► use App\User; 
+			(En la función index()) 
+			► 
+			   	$users = User::orderBy('name', 'ASC')->get();
+        			dd($users);
+        			return view('users.index', compact('users'));
+
+		○ En el archivo users/index.blade.php 
+			(cambiar el titulo de la class="card-header") 
+			►     <div class="card-header">Users</div>
+			(dentro de class="card-body" crear tabla) 
+			► 
+			        <table class="table table-stripped table-bordered">
+                       	 		<thead>
+                            		<tr>    
+                                		<td>Name</td>
+                                		<td>CI</td>
+                                		<td>Phone</td>
+                                		<td>Email</td>
+                                		<td>Username</td>
+                                		<td>Rol</td>
+                                		<td>Actions</td>
+                            		</tr>
+                        		</thead>
+                        		<tbody>
+                            		@foreach($users as $user)
+                            		<tr>
+                                		<td>{{$user->name}}</td>
+                                		<td>{{$user->ci}}</td>
+                                		<td>{{$user->phone}}</td>
+                                		<td>{{$user->email}}</td>
+                                		<td>{{$user->username}}</td>
+                                		<td>{{$user->rol->name}}</td>
+
+                                		<td><a href="{{ url('users/'.$user->id.'/edit')}}">
+                                    		<button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+                                    		</a> 
+                                    		{!! Form::open(['url' => 'users/'.$user->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                                    		confirm("Are sure to delete user")', 'style' => 'float:left']) !!}
+
+		                               	{!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                		                {!! Form::close()!!}
+                                	</td>
+                            		</tr>
+
+                            		@endforeach
+                        		</tbody>					
+                    		</table>
+
+		CREAR USERS 
+		○ AÑADIR archivo a users/create.blade.php 
+			(modificar titulo)
+			►  <div class="card-header"> User / New </div>
+			(añadir formulario en class="card-body") 
+			► 
+				      {!! Form::open(['url' => 'users']) !!}
+
+                    			<label>Rol:</label>
+                    			{!! Form::select('user_id', $users,  null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    			<label>Name:</label>
+                    			{!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+  		         	        <label>CI:</label>
+        		            	{!! Form::text('ci', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    			<label>Phone:</label>
+                    			{!! Form::number('phone', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    			<label>Email:</label>
+                    			{!! Form::email('email', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    			<label>Username:</label>
+                    			{!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    			<label>Password: </label>
+                    			<input type="password" name="password"  class="form-control" required>
+
+                    			<div class="text-center">
+                    			{!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+
+                    			{!! Form::close() !!}
+					</div>
+
+		○ Modificar funcion create() 
+			► 
+				$rols = Rol::orderBy('name', 'ASC')->pluck('name', 'id'); 
+				return view('users.create', compact('rols')); 
+		
+		○ Modificar la funcion store() 
+			► 
+				  $request->validate([
+            			  	'rol_id' => 'required', 
+            				'name' => 'required',
+            				'ci' => 'required', 
+            				'username' => 'required|unique:users,username|max:50', 
+            				'email' => 'required|unique:users, email', 
+            				'password' => 'required'
+        			]);
+
+        			$request['password'] = bcrypt($request->password);
+
+        			$user = User::create($request->all());
+
+        			return redirect('users');
+
+		EDITAR USERS
+		○ Crear boton para editar roles en index.blade.php 
+			► 
+				<td><a href="{{ url('users/'.$user->id.'/edit')}}">
+                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                    </a> 
+                                </td>
+
+		○ Añadir archivo a rols\edit.blade.php 
+			(Modificar class="card-header") 
+			►   <div class="card-header"> Rol / Edit </div>
+			(Agregar formulario para modificar)
+			► 
+				{!! Form::model($user, ['url' => 'users/'.$user->id, 'method'=>'PUT']) !!}
+
+                    		<label>Rol:</label>
+                    		{!! Form::select('rol_id', $rols,  null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    		<label>Name:</label>
+                    		{!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    		<label>CI:</label>
+                    		{!! Form::text('ci', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    		<label>Phone:</label>
+                    		{!! Form::number('phone', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    		<label>Email:</label>
+                    		{!! Form::email('email', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    		<label>Username:</label>
+                    		{!! Form::text('username', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    		<label>Password: </label>
+                    		<input type="password" name="password"  class="form-control" required>
+
+                    		<div class="text-center">
+                    		{!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    		{!! Form::close() !!}
+                    		</div>
+
+		○ Modificar la funcion edit() 	 
+			► 
+
+				 $user = User::find($id);
+        			 $rols = Rol::orderBy('name', 'ASC')->pluck('name', 'id');
+        			 return view('users.edit', compact('user', 'rols'));
+				
+ 
+				
+			
+		○ Modificar la funcion update() 
+			► 
+				
+				$user=User::find($id);
+        
+        				$request->validate([
+            					'rol_id' => 'required', 
+            					'name' => 'required',
+            					'ci' => 'required', 
+            					'username' => 'required|unique:users,username', 
+            					'email' => 'required|unique:users,email,'.$user->email.',email', 
+            					'password' => 'required'
+      					]); 
+
+				$password = $user->password; 
+				if($request->password)
+				{
+					$password = bcrypt($request->password);
+				}
+				
+				$request['password'] = $password; 
+
+				$user->fill($request->all());
+				$user->save();
+
+				return redirect('users');
+				
+
+
+		ELIMINAR USER
+		○ Añadir formulario de eliminación en index.blade.php 
+			► 
+			            {!! Form::open(['url' => 'users/'.$user->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                                    confirm("Are sure to delete user")', 'style' => 'float:left']) !!}
+
+                                    {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                                    {!! Form::close()!!}
+	
+                       	
+			
+		○ Modificar la funcion destroy() 
+			► 
+			        $user = User::find($id); 
+       				 if($user){
+            				$user->delete();
+       				 }
+
+        			return redirect('users');
+
+
+
+       	VISTA CATEGORIES  
+		○ Crear vista para categories 
+			► Crear carpeta views/rols 
+			► Añadir archivo index.blade 
+		○ Crear Controlador para categories  
+			► php artisan make:controller CategoryController --resource 
+		○ Agregar ruta para categories routes/web.php 
+			► Route::resource('categories', 'CategoryController'); 
+
+		○ En el archivo CategoryController.php 
+			(importar modelo Category) 
+			► use App\Category; 
+			(En la función index()) 
+			► 
+			   	$categories = Category::orderBy('name', 'ASC')->get();
+        			dd($categories);
+        			return view('categories.index', compact('categories'));
+
+		○ En el archivo app.blade.php 
+			(modificar la ruta del elemento <a> para Categories) 
+			►  <a href="{{url('/categories')}}" class="nav-link">Categories</a>	
+
+		○ En el archivo categories/index.blade.php 
+			(cambiar el titulo de la class="card-header") 
+			►     <div class="card-header">Categories</div>
+			(dentro de class="card-body" crear tabla) 
+			► 
+			        <table class="table table-stripped table-bordered">
+                       	 		<thead>
+                            		<tr>    
+                                		<td>Names</td>
+                                		<td>Actions</td>
+                            		</tr>
+                        		</thead>
+                        		<tbody>
+                            			@foreach($categories as $category)
+                            			<tr>
+                                			<td>{{$category->name}}</td>
+                                			<td> ---- </td>
+                            			</tr>
+
+                            			@endforeach
+                        		</tbody>
+                    		</table>
+
+		CREAR CATEGORIES 
+		○ AÑADIR archivo a categories/create.blade.php 
+			(modificar titulo)
+			►  <div class="card-header"> Category / New </div>
+			(añadir formulario en class="card-body") 
+			► 
+				{!! Form::open(['url' => 'categories']) !!}
+
+                    		<label>Name:</label>
+                    		{!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    		<div class="text-center" style="margin-top:20px">
+                    		{!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    		{!! Form::close() !!}
+				</div>
+
+		○ Modificar funcion create() 
+			► return view('categories.create');
+		
+		○ Modificar la funcion store() 
+			► 
+				$request->validate([
+            			'name' => 'required|unique:rols,name|max:50', 
+        			]);
+
+        			$category = Category::create($request->all());
+        			return redirect('categories');
+
+		EDITAR CATEGORIES  
+		○ Crear boton para editar categories en index.blade.php 
+			► 
+				<td><a href="{{ url('categories/'.$category->id.'/edit')}}">
+                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                    </a> 
+                                </td>
+
+		○ Añadir archivo a categories\edit.blade.php 
+			(Modificar class="card-header") 
+			►   <div class="card-header"> Category / Edit </div>
+			(Agregar formulario para modificar)
+			► 
+				{!! Form::model($rol, ['url' => 'rols/'.$rol->id, 'method'=>'PUT']) !!}
+                    		<label>Name:</label>
+                    		{!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    		<div class="text-center" style="margin-top: 20px">
+                    		{!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    		{!! Form::close() !!}
+				</div>
+
+		○ Modificar la funcion edit() 	 
+			► 
+			$category = Category::find($id);
+        		return view('categories.edit', compact('category'));
+		○ Modificar la funcion update() 
+			► 
+					$category = Category::find($id);
+
+			        $request->validate([
+           			 'name' => 'required|unique:categories,name,'.$category->name.',name|max:50',
+        			]);
+
+        			$category->fill($request->all());
+        			$category->save();
+
+        			return redirect('categories');
+
+		ELIMINAR CATEGORY 
+		○ Añadir formulario de eliminación en index.blade.php 
+			► 
+			{!! Form::open(['url' => 'categories/'.$category->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                        confirm("Are sure to delete category")', 'style' => 'float:left']) !!}
+
+                        {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                        {!! Form::close()!!}
+			
+		○ Modificar la funcion destroy() 
+			► 
+			        $category = Category::find($id); 
+       				 if($category){
+            			$category->delete();
+       				 }
+
+        			return redirect('category');
+
+
+
+        VISTA PRODUCTS
+		○ Crear vista para products  
+			► Crear carpeta views/products 
+			► Añadir archivo index.blade 
+		○ Crear Controlador para products  
+			► php artisan make:controller ProductController --resource 
+		○ Agregar ruta para products routes/web.php 
+			► Route::resource('products', 'ProductController');
+
+		○ En el archivo app.blade.php 
+			(modificar la ruta del elemento <a> para Products) 
+			►  <a href="{{url('/products')}}" class="nav-link">Products</a> 
+
+		○ En el archivo ProductController.php 
+			(importar modelo Product) 
+			► use App\Product; 
+			(En la función index()) 
+			► 
+			   	$products = Product::orderBy('name', 'ASC')->get();
+        			dd($products);
+        			return view('products.index', compact('products'));
+
+		○ En el archivo products/index.blade.php 
+			(cambiar el titulo de la class="card-header") 
+			►     <div class="card-header">Products</div>
+			(dentro de class="card-body" crear tabla) 
+			► 
+			        <table class="table table-stripped table-bordered">
+                       	 		<thead>
+                            		<tr>    
+                                		<td>Name</td>
+			                            <td>Description</td>
+			                            <td>Quantity</td>
+			                            <td>Prize</td>
+			                            <td>Category</td>
+			                            <td>Picture</td>
+			                            <td>Actions</td>
+                            		</tr>
+                        		</thead>
+                        		<tbody>
+                            		@foreach($products as $product)
+                            		<tr>
+		                                <td>{{$product->name}}</td>
+		                                <td>{{$product->description}}</td>
+		                                <td>{{$product->quantity}}</td>
+		                                <td>{{$product->prize}}</td>
+		                                <td>{{$product->category->name}}</td>
+		                                <td>
+		                                    @if($product->picture !='')
+		                                    <img src="{{asset('img/products/'.$product->picture)}}" width="50px">
+		                                    @endif()		                             
+		                                </td>
+
+		                                <td><a href="{{ url('products/'.$product->id.'/edit')}}">
+		                                    <button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+		                                    </a> 
+		                                    {!! Form::open(['url' => 'products/'.$product->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+		                                    confirm("Are sure to delete product")', 'style' => 'float:left']) !!}
+
+		                                    {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+		                                    {!! Form::close()!!}
+		                                </td>
+                            		</tr>
+
+                            		@endforeach
+                        		</tbody>					
+                    		</table>
+
+		CREAR PRODUCTS 
+
+		○ AÑADIR ruta para crear productos 
+			►  <a href="{{ url('products/create') }}">
+				  	<button class="btn btn-sm btn-success" style="margin-bottom: 20px">
+                                + New
+                    </button>
+                </a>
+
+		○ AÑADIR archivo a products/create.blade.php 
+			(modificar titulo)
+			►  <div class="card-header"> Product / New </div>
+			(añadir formulario en class="card-body") 
+			► 
+				     {!! Form::open(['url' => 'products', 'file' => true]) !!}
+
+                    <label>Category:</label>
+                    {!! Form::select('category_id', $categories,  null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Name:</label>
+                    {!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Description:</label>
+                    {!! Form::text('description', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Quantity:</label>
+                    {!! Form::number('quantity', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Prize:</label>
+                    {!! Form::number('prize', null, ['class' => 'form-control', 'required' => 'required', 'step' => 'any']) !!}
+
+                    <label>Picture:</label>
+                    <input type="file" name="file" class="form-control">
+
+                    <div class="text-center" style="margin-top:20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+
+                    {!! Form::close() !!}
+                    </div>
+
+		○ Modificar funcion create() 
+			► Añadir use App\Category
+			► Añadir use App\Helper 
+
+			► 
+				$categories = Category::orderBy('name', 'ASC')->pluck('name', 'id'); 
+				return view('products.create', compact('categories')); 
+
+		○ Crear clase helper 
+			► php artisan make:model Helper 
+			► importar Carbon 
+				use Carbon\Carbon 
+			► en clase helper 
+
+				namespace App;
+				use Illuminate\Database\Eloquent\Model;
+				use Carbon\Carbon; 
+				class Helper extends Model
+				{
+				       //
+				    public static function getToken()
+				    {
+				    	$fecha = Carbon::now()->toDateTimeString();
+				    	$fecha = str_replace(':', '_', $fecha); 
+				    	$fecha = str_replace(' ','',$fecha); 
+				 		return $fecha;
+				    }
+				    public static function saveImage($file, $folder, $product_id)
+				    {	
+				    	$name = 'img_'.$product_id.'_'.self::getToken().'.'.$file->getClientOriginalExtension();
+				    	//funcion laravel nos va a situar en la carpeta public 
+				    	$path = public_path().'/img/'.$folder; 
+				    	$file -> move($path, $name); 
+				    
+				    	return $name; 
+				    }
+				    public static function deleteImage($name, $folder)
+				    {
+				        // numero de caracteres de una cadena $name    
+				        if(strlen($name)>0){
+				            $path = public_path().'/img/'.$folder.'/'.$name;
+				            if(file_exists($path)){
+				                unlink($path);
+				            }
+				        }
+				        return true; 
+				    }
+				}
+
+		○ Crear la ruta para las imagenes 
+			► public/img/products  // también es automático
+
+		○ Modificar la funcion store() 
+			► 
+				$request->validate([
+		            'category_id' => 'required', 
+		            'name' => 'required',
+		            'description' => 'required', 
+		            'quantity' => 'required', 
+		            'prize' => 'required',
+		            'file' => 'image', 
+        		]);
+
+		        $product = Product::create($request->all());
+
+		        if($request->file)
+		        {   
+		            $name = Helper::saveImage($request->file, 'products', $product->id); 
+
+		            $product->picture = $name;
+
+		            $product->save();
+		        }
+
+		        return redirect('products');
+
+		EDITAR PRODUCTS 
+		○ Crear boton para editar roles en index.blade.php 
+			► 
+				<td>
+					<a href="{{ url('products/'.$product->id.'/edit')}}">
+                                    <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px">Edit</button>
+                    </a> 
+                </td>
+
+		○ Añadir archivo a products\edit.blade.php 
+			(Modificar class="card-header") 
+			►   <div class="card-header"> Product / Edit </div>
+			(Agregar formulario para modificar)
+			► 
+				{!! Form::model($product, ['url' => 'products/'.$product->id, 'method'=>'PUT', 'files' => true]) !!}
+
+
+                    <label>Category:</label>
+                    {!! Form::select('category_id', $catogories,  null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Name:</label>
+                    {!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Description:</label>
+                    {!! Form::text('description', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Quantity:</label>
+                    {!! Form::number('quantity', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Prize:</label>
+                    {!! Form::number('prize', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Picture:</label>
+
+                    @if($product->picture !='')
+                    <img src="{{asset('img/products/'.$product->picture)}}" width="50px"><br>
+                    @endif()
+                    <input type="file" name="file" class="form-control">
+                   
+
+                    <div class="text-center" style="margin-top:20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    {!! Form::close() !!}
+                    </div>
+
+
+		○ Modificar la funcion edit() 	 
+			► 
+				$product = Product::find($id);
+        		$categories = Category::orderBy('name', 'ASC')->pluck('name', 'id'); 
+        		return view('products.edit', compact('product', 'categories')); 
+	
+			
+		○ Modificar la funcion update() 
+			► 
+				$product = Product::find($id); 
+		        $request->validate([
+		            'category_id' => 'required', 
+		            'name' => 'required', 
+		            'description' => 'required', 
+		            'quantity' => 'required', 
+		            'prize' => 'required', 
+		            'file' => 'image' 
+		        ]);
+
+		        $photo = $product->picture; 
+		        if($request->file) {
+		            Helper::deleteImage($product->picture, 'products');
+		            $photo = Helper::saveImage($request->file,'products', $product->id);
+		        }
+
+		        $request['picture'] = $photo; 
+		        $product->fill($request->all()); 
+		        $product->save(); 
+
+		        return redirect('products'); 
+				
+
+		ELIMINAR USER
+		○ Añadir formulario de eliminación en index.blade.php 
+			► 
+			            {!! Form::open(['url' => 'users/'.$user->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                                    confirm("Are sure to delete user")', 'style' => 'float:left']) !!}
+
+                                    {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                                    {!! Form::close()!!}
+	
+                       	
+			
+		○ Modificar la funcion destroy() 
+			► 
+			    $product = Product::find($id); 
+		        if($product)
+		        {
+		            Helper::deleteImage($product->picture, 'products'); 
+		            $product->delete(); 
+		        }
+
+		        return redirect('products');
+
+
+
+
+		VISTA SALES 
+		○ Crear vista para sales   
+			► Crear carpeta views/sales 
+			► Añadir archivo index.blade 
+		○ Crear Controlador para sales  
+			► php artisan make:controller SaleController --resource 
+		○ Agregar ruta para sales routes/web.php 
+			► Route::resource('sales', 'SaleController');
+
+		○ En el archivo app.blade.php 
+			(modificar la ruta del elemento <a> para Sales) 
+			►  <a href="{{url('/sales')}}" class="nav-link">Sales</a> 
+
+		○ En el archivo Sale<Controller.php 
+			(importar modelo Sale) 
+			► use App\Sale; 
+			(En la función index()) 
+			► 
+				$sales = Sales::orderBy('name', 'ASC')->get(); 
+				dd($sales);
+        		return view('sales.index', compact('sales'));
+
+		○ En el archivo sales/index.blade.php 
+			(cambiar el titulo de la class="card-header") 
+			►     <div class="card-header">Sales</div>
+			(dentro de class="card-body" crear tabla) 
+			► 
+			
+                    <table class="table table-stripped table-bordered" id="myTable">
+                        <thead>
+                            <tr>    
+                                <td>User</td>
+                                <td>Description</td>
+                                <td>Total Amount</td>
+                                <td>Actions</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                                $count_total= 0; 
+                            ?>
+
+                            @foreach($sales as $sale)
+                            <tr>
+                                <td>{{$sale->user->name}}</td>
+                                <td>{{$sale->description}}</td>
+                                <td>{{$sale->total_amount}}</td>
+                                <td>
+                                    <a href="{{ url('sales/'.$sale->id.'/edit')}}">
+                                    <button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+                                    </a> 
+
+                                    {!! Form::open(['url' => 'sales/'.$sale->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                                    confirm("Are sure to delete sale")', 'style' => 'float:left']) !!}
+
+                                    {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                                    {!! Form::close()!!}
+                                </td>
+                            </tr>
+
+                            <?php 
+                                $count_total = $count_total + $sale->total_amount;
+                            ?>
+
+                            @endforeach
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-left; font-weight-bold">TOTAL: </td>
+                                <td class="text-right font-weight-bold">{{$count_total}}</td>
+
+                            </tr>
+                        </tfoot>
+
+                    </table>
+
+		CREAR SALES
+
+		○ AÑADIR ruta para crear sales 
+			►  
+               	<div class="text-right">
+                        <a href="{{ url('sales/create')}}">
+                            <button class="btn btn-sm btn-success" style="margin-bottom: 20px">
+                                + New
+                            </button>
+                        </a>
+                </div>
+
+		○ AÑADIR archivo a sales/create.blade.php 
+			(modificar titulo)
+			►  <div class="card-header"> Sale / New </div>
+			(añadir formulario en class="card-body") 
+			► 
+					{!! Form::open(['url' => 'sales']) !!}
+                    
+                    <label>User:</label>
+                    {!! Form::select('user_id', $users, null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    <label>Name:</label>
+                    {!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <div class="text-center" style="margin-top:20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success', 'style' => 'margin-top: 20px']) !!}
+                    {!! Form::close() !!}
+
+                    </div>
+
+		○ Modificar funcion create() 
+			► Añadir use App\User
+			► 
+				$users = User::orderBy('name', 'ASC')->pluck('name', 'id');
+        		return view('sales.create', compact('users'));
+
+
+		○ Modificar la funcion store() 
+			► 
+				$request->validate([
+	            'user_id' => 'required', 
+	            'description' => 'required', 
+        		]);
+
+		        $request['total_amount'] = 0;  
+
+		        $sale = Sale::create($request->all()); 
+
+		        return redirect('sales');
+
+		EDITAR SALES 
+		○ Crear boton para editar sales en index.blade.php 
+			► 
+				<td>
+					<a href="{{ url('sales/'.$sale->id.'/edit')}}">
+                        <button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+                    </a> 
+                </td>
+
+		○ Añadir archivo a sales\edit.blade.php 
+			(Modificar class="card-header") 
+			►   <div class="card-header"> Sale / Edit </div>
+			(Agregar formulario para modificar)
+			► 
+				{!! Form::model($sale, ['url' => 'sales/'.$sale->id, 'method'=>'PUT']) !!}
+
+                    <label>User:</label>
+                    {!! Form::select('user_id', $users, null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Description:</label>
+                    {!! Form::textarea('description', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Total amount:</label>
+                    {!! Form::number('total_amount', null, ['class' => 'form-control', 'disabled' => true]) !!}
+                    
+                    <div class="text-center" style="margin-top: 20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    {!! Form::close() !!}
+                    </div>
+
+
+                    
+		○ Modificar la funcion edit() 	 
+			► 
+				$sale = Sale::find($id);
+		        $users = User::orderBy('name', 'ASC') -> pluck ('name', 'id'); 
+		        return view('sales.edit', compact('sale', 'users'));
+	
+			
+		○ Modificar la funcion update() 
+			► 
+				$request->validate([
+	            'user_id' => 'required',
+	            'description' => 'required'
+		        ]);
+
+		        $sale = Sale::find($id);
+		        $sale->fill($request->all());
+		        $sale->save();
+
+		        return redirect('sales');
+				
+
+		ELIMINAR SALE
+		○ Añadir formulario de eliminación en index.blade.php 
+			► 
+			            {!! Form::open(['url' => 'users/'.$user->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                                    confirm("Are sure to delete user")', 'style' => 'float:left']) !!}
+
+                                    {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                                    {!! Form::close()!!}
+	
+                       	
+			
+		○ Modificar la funcion destroy() 
+			► 
+			    $sale = Sale::find($id); 
+		        if($sale)
+		        {
+		            $sale->delete();
+		        }
+
+		        return redirect('sales');
+
+
+
+
+		VISTA SALE PRODUCT 
+		○ Crear vista para sale product   
+			► Crear carpeta views/sales_products 
+			► Añadir archivo index.blade  
+		○ Crear Controlador para sales products  
+			► php artisan make:controller SaleProductController --resource 
+		○ Agregar ruta para sales routes/web.php 
+			► Route::resource('sales', 'SaleController');
+		○ En el archivo sales/index.blade 
+			► Agregar enlaca para sales products  
+				<a href="{{ url('sales/'.$sale->id.'/edit')}}">
+                    <button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+                </a> 
+
+		○ En el archivo SaleProductController.php 
+			(importar modelo Sale) 
+			► use App\Sale; 
+			(En la función index()) 
+			► 
+				$sale = Sale::find($sale_id);
+
+        		$sales_products = SaleProduct::where('sale_id',$sale->id)->get(); 
+
+        		return view('sales_products.index', compact('sales_products','sale'));
+
+		○ En el archivo sales_products/index.blade.php 
+			(cambiar el titulo de la class="card-header") 
+			►   <div class="card-header">Sales Products</div>
+			(dentro de class="card-body" crear tabla) 
+			► 
+			
+            		<table class="table table-stripped table-bordered" id="myTable">
+                        <thead>
+                            <tr>    
+                                <td>Sale</td>
+                                <td>Product</td>
+                                <td>Quantity</td>
+                                <td>Amount</td>
+                                <td>Actions</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($sales_products as $sale_product)
+                            <tr>
+                                <td>{{$sale_product->sale->id}}</td>
+                                <td>{{$sale_product->product->name}}</td>
+                                <td>{{$sale_product->quantity}}</td>
+                                <td>{{$sale_product->amount}}</td>
+                                <td>
+                                    <a href="{{ url('sales/'.$sale_product->sale->id.'/sales_products/'.$sale_product->id.'/edit')}}">
+                                    <button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+                                    </a> 
+
+                                    {!! Form::open(['url' => 'sales/'.$sale_product->sale->id.'/sales_products/'.$sale_product->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                                    confirm("Are sure to delete sale product")', 'style' => 'float:left']) !!}
+
+                                    {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                                    {!! Form::close()!!}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+		CREAR SALES PRODUCTS
+
+		○ AÑADIR ruta para crear sales products  
+			►  
+               	    <div class="text-right">
+                        <a href="{{ url('sales/'.$sale->id.'/sales_products/create')}}">
+                            <button class="btn btn-sm btn-success" style="margin-bottom: 20px">
+                                + New
+                            </button>
+                        </a>
+                    </div>
+
+		○ AÑADIR archivo a sales/create.blade.php 
+			(modificar titulo)
+			►  <div class="card-header"> Sale Product / New </div>
+			(añadir formulario en class="card-body") 
+			► 
+				{!! Form::open(['url' => 'sales/'.$sale->id.'/sales_products']) !!}
+                    
+                    <!--
+                    <label>Sale:</label>
+                    {!! Form::text('sale_id', $sale->id, null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    <br>
+                    -->
+
+                    <label>Product:</label>
+                    {!! Form::select('product_id', $products, null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Quantity:</label>
+                    {!! Form::number('quantity', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Amount</label>
+                    {!! Form::number('amount', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <div class="text-center" style="margin-top:20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success', 'style' => 'margin-top: 20px']) !!}
+                    {!! Form::close() !!}
+
+                    </div>
+
+		○ Modificar funcion create() 
+			► Añadir use App\Product
+			► 
+				$sale = Sale::find($sale_id); 
+		        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id');
+		        return view('sales_products.create', compact('sale', 'products'));
+
+
+		○ Modificar la funcion store() 
+			► 
+			$request->validate([
+            'product_id' => 'required',
+            'quantity' => 'required',
+        	]);
+
+	        $product = Product::find($request->product_id);
+	        $sale = Sale::find($sale_id);
+	        
+	        $request['sale_id'] = $sale_id;
+	        $request['amount'] = $request->quantity * $product->prize; 
+	        $sale->total_amount = $sale->total_amount + $request->amount;
+
+	        $sale->save();
+	        $sale_product = SaleProduct::create($request->all());
+
+	        return redirect('sales/'.$sale_product->sale_id.'/sales_products'); 
+
+		EDITAR SALES PRODUCTS 
+		○ Crear boton para editar sales products en index.blade.php 
+			► 
+				<td>
+					<a href="{{ url('sales/'.$sale_product->sale->id.'/sales_products/'.$sale_product->id.'/edit')}}">
+                    <button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+                    </a> 
+                </td>
+
+		○ Añadir archivo a sales_products\edit.blade.php 
+			(Modificar class="card-header") 
+			►   <div class="card-header"> Sale Product / Edit </div>
+			(Agregar formulario para modificar)
+			► 
+				{!! Form::model($sale_product, ['url' => 'sales/'.$sale_product->sale_id.'/$sales_products/'.$sale_product->id, 'method'=>'PUT']) !!}
+
+                    <label>Product:</label>
+                    {!! Form::select('product_id', $products, null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Quantity:</label>
+                    {!! Form::number('quantity', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Amount:</label>
+                    {!! Form::number('amount', null, ['class' => 'form-control', 'disabled' => true]) !!}
+                    
+                    <div class="text-center" style="margin-top: 20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    {!! Form::close() !!}
+                    </div>
+
+
+                    
+		○ Modificar la funcion edit() 	 
+			► 
+				$sale_product = SaleProduct::find($id); 
+		        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id'); 
+		        return view('sales_products.edit', compact('sale_product', 'products'));
+	
+			
+		○ Modificar la funcion update() 
+			► 
+				$request->validate([
+	            'product_id' => 'required', 
+	            'quantity' => 'required', 
+            
+        		]);
+
+		        $sale = Sale::find($sale_id); 
+		        $product = Product::find($request->product_id);
+		        $sale_product = SaleProduct::find($id);
+		          
+
+		        $old_amount = $sale_product->amount; 
+
+		        $request['sale_id'] = $sale_id; 
+		        $request['amount'] = $request->quantity * $product->prize;
+
+		        $sale->total_amount = $sale->total_amount - $old_amount + $request->amount; 
+
+		        $sale->save(); 
+
+		        $sale_product->fill($request->all());
+		        $sale_product->save();
+
+		        return redirect('sales/'.$sale_product->sale_id.'/sales_products');
+
+		ELIMINAR SALE
+		○ Añadir formulario de eliminación en index.blade.php 
+			► 
+			     {!! Form::open(['url' => 'sales/'.$sale_product->sale->id.'/sales_products/'.$sale_product->id, 'method'=>'DELETE', 'onsubmit' => 'return confirm("Are sure to delete sale product")', 'style' => 'float:left']) !!}
+	
+                       	
+			
+		○ Modificar la funcion destroy() 
+			► 
+			    $sale_product = SaleProduct::find($id); 
+		        $sale = Sale::find($sale_id);
+
+		        if($sale_product)
+		        {
+		            $sale->total_amount = $sale->total_amount - $sale_product->amount; 
+		            $sale->save();
+
+		            $sale_product->delete();
+
+
+		        }
+
+		        return redirect('sales'.$sale_product->sale_id.'/sales_products');
+
+
+
+
+		 ○ Cascade Destroy SaleController.php (*****)
+
+		 	► 
+		 		    public function destroy($id)
+				    {
+				        $sale = Sale::find($id); 
+				        if($sale)
+				        {
+				            $sale_product = SaleProduct::where('sale_id', $sale->id)->delete();
+				            $sale->delete();
+				        }
+
+				        return redirect('sales');
+				    }
+
+------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+LIMITAR ACCESO / VALIDAR USUARIO 
+	• superadmin 
+	• cajero 
+	• usuario 
+
+		► Agregar filtro en app.blade.php 
+
+
+                        @if(auth::user()->rol-> name == 'superadmin')
+
+                            <li>
+                                <a href="{{url('/rols')}}" class="nav-link">Rols</a>
+                            </li>
+                            <li>
+                                <a href="{{url('/users')}}" class="nav-link">Users</a>
+                            </li>
+                            <li> 
+                                <a href="{{url('/categories')}}" class="nav-link">Categories</a>   
+                            </li>   
+                            <li>
+                                <a href="{{url('/products')}}" class="nav-link">Products</a>
+                            </li>
+                             <li>
+                                <a href="{{url('/sales')}}" class="nav-link">Sales</a>
+                            </li>
+                            
+                        @endif
+
+
+
+	• Validar funciones 
+
+		► Crear middleware 
+			○ php artisan make:middleware CheckSuperAdminRol
+
+		► Ingresar codificación en Middleware/CheckSuperAdminRol.php 
+			○ Import use Illuminate\Support\Facades\Auth;
+			
+			○ 
+				{
+			        $user = Auth::user();
+			        if($user->rol_id != 1)
+			        {
+			            return redirect('home');
+			        }
+			        return $next($request);
+		    	} 
+
+
+		► Regristar middleware en App/Http/Middleware/Kernel.php inside $routeMiddleware 
+				► 'super' =>  \App\Http\Middleware\CheckSuperAdminRol::class, 
+			○ 
+
+		► Agregar en las rutas 
+
+			○ 
+				Route::middleware(['auth', 'super'])->group(function(){
+
+					Route::resource('rols','RolController');
+					Route::resource('users', 'UserController');
+					Route::resource('categories','CategoryController');
+					Route::resource('products', 'ProductController');
+					Route::resource('sales', 'SaleController');
+					Route::resource('sales.sales_products', 'SaleProductController');
+				});
+
+	• Cambiar carpetas 
+		► Crear carpeta superadmin 
+			○ mover las carpetas existentes del proyecto 
+		► Cambiar las direcciones para los controladores y sus funciones 
+			○ UserController 
+				• index() 
+					return view('superadmin.users.index', compact('users'));
+
+				• create() 
+					return view('superadmin.users.create', compact('rols'));
+				• edit() 
+					return view('superadmin.users.edit', compact('user', 'rols'));
+
+			○ SaleController 
+				• index()
+					 return view('superadmin.sales.index', compact('sales'));
+
+				• create()
+					return view('superadmin.sales.create', compact('users'));
+				• edit()
+					 return view('superadmin.sales.edit', compact('sale', 'users'));
+
+			○ RolController 
+				• index()
+					return view('superadmin.rols.index', compact('rols'));
+				• create() 
+					return view('superadmin.rols.create');
+				• edit() 
+					return view('superadmin.rols.edit', compact('rol'));
+
+			○ SaleProductController 
+				• index()
+					return view('superadmin.sales_products.index', compact('sales_products','sale'));
+				• create()
+					return view('superadmin.sales_products.create', compact('sale', 'products'));
+				• edit()
+					return view('superadmin.sales_products.edit', compact('sale_product', 'products'));
+
+			○ ProductController 
+				• index()
+					return view('superadmin.products.index', compact('products'));
+				• create()
+					return view('superadmin.products.create', compact('categories'));
+				• edit()
+					return view('superadmin.products.edit', compact('product', 'categories'));
+
+			○ CategoryController 
+				• index()
+					return view('superadmin.categories.index', compact('categories'));
+				• create()
+					return view('superadmin.categories.create');
+				• edit() 
+					return view('superadmin.categories.edit', compact('category'));
+
+
+
+		► Mover controladores, crear carpeta Admin
+
+			○ UserController 
+				app/Http/Controllers/UserController.php → app/Http/Controllers/Admin/UserController.php
+
+				► modificar 
+					namespace App\Http\Controllers\Admin;
+					use App\Http\Controllers\Controller; 
+
+			○ SaleController 
+				app/Http/Controllers/SaleController.php → app/Http/Controllers/Admin/SaleController.php
+
+			○ RolController 
+				app/Http/Controllers/RolController.php → app/Http/Controllers/Admin/RolController.php
+			○ SaleProductController 
+				app/Http/Controllers/ProductSaleController.php → app/Http/Controllers/Admin/ProductSaleController.php
+			○ ProductController 
+				app/Http/Controllers/ProductController.php → app/Http/Controllers/Admin/ProductController.php
+			○ CategoryController 
+				app/Http/Controllers/CategoryController.php → app/Http/Controllers/Admin/CategoryController.php
+
+		► Crear carpeta cashier 
+			○ mover la carpeta de product 
+				► cashier\products
+
+			○ Crear carpeta cashier dentro de controladores
+				► app\Http\Controllers\Cashier
+			○ Crear controlador para cashier 
+
+				► php artisan make:controller Cashier/SaleCashierController --resource
+				► agregar clase Controller en SaleCashierController
+					use App\Http\Controllers\Controller;
+
+		► Agregar en las rutas para superadmin
+			○ 
+				Route::middleware(['auth', 'super'])->group(function(){
+
+					Route::resource('rols','Admin\RolController');
+					Route::resource('users', 'Admin\UserController');
+					Route::resource('categories','Admin\CategoryController');
+					Route::resource('products', 'Admin\ProductController');
+					Route::resource('sales', 'Admin\SaleController');
+					Route::resource('sales.sales_products', 'Admin\SaleProductController');
+				});
+
+		► Agregar en las rutas para cashier 
+				Route::middleware(['auth')->group(function(){
+
+					Route::resource('rols','Cashier\RolController');
+					Route::resource('users', 'Cashier\UserController');
+					Route::resource('categories','Cashier\CategoryController');
+					Route::resource('products', 'Cashier\ProductController');
+					Route::resource('sales', 'Cashier\SaleController');
+					Route::resource('sales.sales_products', 'Cashier\SaleProductController');
+				});
+
+
+
+		► Crear clientes 
+			○ Crear nueva migracion 
+				► php artisan make:migration create_clients_table 
+
+				► crear tabla clients en la nueva migración y añadir columna foranea a sales  
+					 public function up()
+					    {
+					        Schema::create('clients', function (Blueprint $table) {
+					            $table->engine = 'InnoDB';
+					            $table->bigIncrements('id');
+					            $table->unsignedBigInteger('user_id')->nullable();
+					            $table->string('name')->nullable();
+					            $table->string('ci')->nullable();
+					            $table->string('phone')->nullable();
+					            $table->timestamps();
+
+					            $table->foreign('user_id')->references('id')->on('users');
+					        });
+
+
+					        Schema::table('sales', function (Blueprint $table){
+					            $table->unsignedBigInteger('client_id')->after('user_id')->nullable(); 
+
+					            $table->foreign('client_id')->references('id')->on('clients');
+
+
+					        });
+					    }
+
+					    /**
+					     * Reverse the migrations.
+					     *
+					     * @return void
+					     */
+					    public function down()
+					    {
+					        Schema::table('sales', function (Blueprint $table){
+					            $table->dropColumn('client_id');
+					        });
+					        
+					        Schema::dropIfExists('clients');
+					    }
+
+
+				► php artisan migrate
+
+			○ Crear modelo 
+				► php artisan make:model Client 
+				► Definir relaciones con user y sale 
+
+					    public function user()
+					    {
+					    	return $this->belongsTo('App\User');
+					    }
+
+					    public function sales()
+					    {
+					    	return $this->hasMany('App\Sale');
+					    }
+				► Modificar modelo sale 
+						protected $fillable = [
+					    	'user_id', 'client_id','description', 'total_amount'
+					    ]; 
+
+			○ Modificar controlador de sales para superadmin 
+				► Modificar campos de sales/index.blade.php 
+					        <tr>    
+                                <td>User</td>
+                                <td>Client</td>
+                                <td>Description</td>
+                                <td>Total Amount</td>
+                                <td>Actions</td>
+                            </tr>	
+
+
+
+                            <td>
+                                @if($sale->client)
+                                {{ $sale->client->id}}
+                                @else
+                                -
+                                @endif
+
+                            </td>
+
+
+                ► Modificar campos de sales/create.blade.php 
+
+                	{!! Form::open(['url' => 'sales']) !!}
+                    
+                    <label>User:</label>
+                    {!! Form::select('user_id', $users, null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Name: </label>
+                    {!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    <label>CI: </label>
+                    {!! Form::text('ci', null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    <label>Phone: </label>
+                    {!! Form::text('phone', null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    <label>Description:</label>
+                    {!! Form::textarea('description', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <div class="text-center" style="margin-top:20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success', 'style' => 'margin-top: 20px']) !!}
+                    {!! Form::close() !!} </div>
+
+			
+				► Modificar funcion store para los nuevos campos de client 
+
+					○ importar use App\Client; 
+
+					○ en la funcion store()
+						    {
+						        $request->validate([
+						            'user_id' => 'required', 
+						            'description' => 'required',
+						            'name' => 'required', 
+						            'ci' => 'required',  
+						        ]); 
+
+						        $client = Client::where('ci', $request->ci)->first();
+
+						        if($client)
+						        {
+						            $client->fill($request->all()); 
+						            $client->save();
+						        }
+
+						        else
+						        {
+						            $client = Client::create($request->all());
+						        }
+
+						        $request['client_id'] = $client->id;
+
+						        $request['total_amount'] = 0;  
+						        dd($request);
+						        $sale = Sale::create($request->all()); 
+
+						        return redirect('sales');
+						    }
+
+			○ Definir ruta para clients 
+
+				► Crear controlador  
+					○ php artisan make:controller Admin/UserClientController --resource 
+
+				► Añadir ruta de controlador 
+					○ Route::resource('users.clients', 'Admin\UserClientController');
+				► Modificar vista users index.blade.php  
+					○ Dentro de <td>Actions </td>
+						<a href="{{ url('users/'.$user->id.'/clients')}}">
+                            <button class="btn btn-sm btn-info" style="float:left; margin-left:10px;">Clients</button>
+                        </a>
+            ○ Definir las vistas clients
+            	► index 
+
+            		<table class="table table-stripped table-bordered" id="myTable">
+                        <thead>
+                            <tr>    
+                                <td>User</td>
+                                <td>Name</td>
+                                <td>CI</td>
+                                <td>Phone</td>
+                                <td>Actions</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($clients as $client)
+                            <tr>
+                                <td>{{$client->user->name}}</td>
+                                <td>{{$client->name}}</td>
+                                <td>{{$client->ci}}</td>
+                                <td>{{$client->phone}}</td>
+                                <td><a href="{{ url('users/'.$client->user->id.'/clients/'.$client->id.'/edit')}}">
+                                    <button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+                                    </a> 
+                                    {!! Form::open(['url' => 'users/'.$client->user->id.'/clients/'.$client->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                                    confirm("Are sure to delete client")', 'style' => 'float:left']) !!}
+
+                                    {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                                    {!! Form::close()!!}
+
+                                </td>
+
+
+                            </tr>
+
+                            @endforeach
+                        </tbody>
+                    </table> 
+
+            	► create
+
+            		{!! Form::open(['url' => 'users/'.$user->id.'/clients']) !!}
+
+            		<!--
+                    <label>User:</label>
+                    {!! Form::text('user_id', $user->id,  null, ['class' => 'form-control', 'required' => 'required']) !!} -->
+
+                    <label>Name:</label>
+                    {!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>CI:</label>
+                    {!! Form::text('ci', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Phone:</label>
+                    {!! Form::text('phone', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <div class="text-center" style="margin-top:20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+
+                    {!! Form::close() !!}
+                    </div>
+
+            	► edit
+
+            		{!! Form::model($client, ['url' => 'users/'.$client->user_id.'/clients/.$client->id', 'method'=>'PUT']) !!}
+
+
+                    <label>User:</label>
+                    {!! Form::text('user_id', $user->id,  null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Name:</label>
+                    {!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>CI:</label>
+                    {!! Form::text('ci', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Phone:</label>
+                    {!! Form::text('phone', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <div class="text-center" style="margin-top:20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    {!! Form::close() !!}
+                    </div>
+
+            ○ Modificar el controlador 
+            	► index() 
+            		public function index($user_id)
+					{
+					    $user = User::find($user_id);
+
+					    $clients = Client::where('user_id', $user->id)->get();
+
+					    return view('superadmin.clients.index', compact('user', 'clients'));
+					        
+					}
+            	► create() 
+            		public function create($user_id)
+				    {
+				        $user = User::find($user_id); 
+
+				        return view('superadmin.clients.create', compact('user'));
+				    }
+
+				    public function store($user_id, Request $request)
+				    {
+				        $request->validate([
+				       
+				            'name' => 'required', 
+				            'ci' => 'required', 
+				            'phone' => 'required'
+
+				        ]);
+
+				        $request['user_id'] = $user_id;
+
+				        $client = Client::create($request->all());
+				        return redirect('users/'.$client->user_id.'/clients');
+				    }
+
+
+            	► edit ()
+
+            		public function edit($user_id, $id)
+				    {
+				        $user = User::find($user_id); 
+				        $client = Client::find($id);
+				        return view('superadmin.clients.edit', compact('client', 'user'));
+				    }
+
+
+	        		public function update($user_id, Request $request, $id)
+				    {
+				        $request->validate([
+				            'name' => 'required', 
+				            'ci' => 'required', 
+				            'phone' => 'required', 
+				        ]);
+
+				        $client['user_id'] = $user_id; 
+				        $client->fill($request->all());
+				        $client->save();
+
+				        return  redirect('users/'.$client->user_id.'/clients');
+				    }
+
+				► destroy() 
+					public function destroy($user_id, $id)
+				    {
+				        $client = Client::find($id); 
+
+				        if($client) 
+				        {
+				            $client->delete();
+				        }
+
+				        return redirect('users/'.$user_id.'/clients');
+				    }
+
+
+		► Actualizar sales/index.blade.php 
+			○ 
+				<tfoot>
+                        <tr>
+                            <td colspan="3" class="text-left; font-weight-bold">TOTAL: </td>
+                            <td class="text-right font-weight-bold">{{$count_total}}</td>
+
+                        </tr>
+                </tfoot>
+
+         ***** HASTA ACA FUNCIONA SALES CREATE para nuevos clientes y tambien crear clientes desde USERS 
+
+
+        ► Actualizar edit() de sales 
+
+        	○ edit.blade.php 
+
+        		    {!! Form::model($sale, ['url' => 'sales/'.$sale->id, 'method'=>'PUT']) !!}
+
+                    <label>User:</label>
+                    {!! Form::select('user_id', $users, null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Client:</label>
+                    {!! Form::select('client_id', $clients, null,['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Description:</label>
+                    {!! Form::textarea('description', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Total amount:</label>
+                    {!! Form::number('total_amount', null, ['class' => 'form-control', 'disabled' => true]) !!}
+                    
+                    <div class="text-center" style="margin-top: 20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    {!! Form::close() !!}
+                    </div>
+
+        	○ edit() 
+
+        		public function edit($id)
+			    {
+			        $sale = Sale::find($id);
+			        $users = User::orderBy('name', 'ASC') -> pluck ('name', 'id');
+			        $clients = Client::where('user_id', $sale->user_id) -> pluck('name', 'id'); 
+			        return view('superadmin.sales.edit', compact('sale', 'users'));
+			    }
+
+
+
+        ► Actualizar create() de sales 
+
+        	○ create.blade.php 
+
+        		{!! Form::open(['url' => 'sales']) !!}
+                    
+                    <label>User:</label>
+                    {!! Form::select('user_id', $users, null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Client:</label>
+                    {!! Form::select('client_id', $clients, null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Description:</label>
+                    {!! Form::textarea('description', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <div class="text-center" style="margin-top:20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success', 'style' => 'margin-top: 20px']) !!}
+                  {!! Form::close() !!}
+
+            ○ create() 
+
+            	public function create()
+			    {
+			        $users = User::orderBy('name', 'ASC')->pluck('name', 'id');
+			        $clients = Client::orderBy('name', 'ASC')->pluck('name', 'id');
+			        return view('superadmin.sales.create', compact('users', 'clients'));
+			    }
+
+			○ store() 
+
+				public function store(Request $request)
+			    {
+			        $request->validate([
+			            'user_id' => 'required', 
+			            /*
+			            'name' => 'required', 
+			            'ci' => 'required',  
+			            */
+			            'client_id' => 'required', 
+			            'description' => 'required',
+
+			        ]); 
+
+			        /*
+
+			        $client = Client::where('ci', $request->ci)->first();
+
+			        if($client)
+			        {
+			            $client->fill($request->all()); 
+			            $client->save();
+			        }
+
+			        else
+			        {
+			            $client = Client::create($request->all());
+			        }
+
+			        $request['client_id'] = $client->id;
+
+			        */
+
+			        $request['total_amount'] = 0;  
+
+			        $sale = Sale::create($request->all()); 
+
+			        return redirect('sales');
+			    }
+
+		► Actualizar edit () de sales 
+
+			○ edit () 
+				public function edit($id)
+			    {
+			        $sale = Sale::find($id);
+			        $users = User::orderBy('name', 'ASC') -> pluck ('name', 'id');
+			        $clients = Client::orderBy('name', 'ASC') -> pluck('name', 'id'); 
+			        return view('superadmin.sales.edit', compact('sale', 'users', 'clients'));
+			    }
+
+			○ update() 
+				public function update(Request $request, $id)
+			    {
+			        $request->validate([
+			            'user_id' => 'required',
+			            'description' => 'required'
+			            // nota: 'client_id' no es required porque no es necesario registrar cliente 
+			        ]);
+
+			        $sale = Sale::find($id);
+			        $sale->fill($request->all());
+			        $sale->save();
+
+			        return redirect('sales');
+			    }
+
+
+
+
+
+        ► Actualizar store () de clients 
+
+        	○ store() 
+        		public function store($user_id, Request $request)
+			    {
+			        $request->validate([
+			            
+			            'name' => 'required', 
+			            'ci' => 'required|unique:clients,ci', 
+			            'phone' => 'required'
+
+			        ]);
+
+			        $request['user_id'] = $user_id;
+			        $client = Client::create($request->all());
+			        return redirect('users/'.$client->user_id.'/clients');
+			    }
+
+	• Vistas para /cashier
+
+		► Crear controlador para products de cashier 
+			○ php artisan make:controller Cashier/ProductCashierController --resource
+
+		► Crear carpeta products 
+
+		► Añadir archivo index.blade.php a cashier/products 
+
+			<div class="card">
+                <div class="card-header">Products</div>
+
+                <div class="card-body">
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>  
+                    @endif
+                    <!--
+                    <div class="text-right">
+                        <a href="{{ url('products/create')}}">
+                            <button class="btn btn-sm btn-success" style="margin-bottom: 20px">
+                                + New
+                            </button>
+                        </a>
+                    </div>
+
+                    -->
+
+                    <table class="table table-stripped table-bordered" id="myTable">
+                        <thead>
+                            <tr>    
+                                <td>Name</td>
+                                <td>Description</td>
+                                <td>Quantity</td>
+                                <td>Prize</td>
+                                <td>Category</td>
+                                <td>Picture</td>
+                                <td>Actions</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($products as $product)
+                            <tr>
+                                <td>{{$product->name}}</td>
+                                <td>{{$product->description}}</td>
+                                <td>{{$product->quantity}}</td>
+                                <td>{{$product->prize}}</td>
+                                <td>{{$product->category->name}}</td>
+                                <td>
+                                    @if($product->picture !='')
+                                    <img src="{{asset('img/products/'.$product->picture)}}" width="50px">
+                                    @endif()
+                                    
+
+                                </td>
+
+                                <td>
+
+                                    <!--
+
+                                    <a href="{{ url('products/'.$product->id.'/edit')}}">
+                                    <button class="btn btn-sm btn-warning" style="float:left; margin-right: 15px">Edit</button>
+                                    </a> 
+
+
+                                    {!! Form::open(['url' => 'products/'.$product->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                                    confirm("Are sure to delete product")', 'style' => 'float:left']) !!}
+
+                                    {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                                    {!! Form::close()!!}
+
+                                    -->
+                                </td>
+                            </tr>
+
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                </div>
+
+        ► index() de products 
+        	○ importar 
+        		use App\Product;
+        	○ funcion index()
+        		public function index()
+			    {
+			        $products = Product::orderBy('name', 'ASC')->get();
+			        return view('cashier.products.index',compact('products'));
+			    }
+
+		► Crear middleware 
+			○ php artisan make:middleware CheckCashierRol 
+
+		► Registrar middleware en App/Http/kernel.php en array $routeMiddleware 
+			○ 
+				'cashier' => \App\Http\Middleware\CheckCashierRol::class,
+
+		► Crear rutas para cashier, agregando 'cashier'
+			○ 	
+				Route::middleware(['auth','cashier'])->group(function(){
+					Route::get('products', 'Cashier\ProductCashierController@index');
+				});  
+
+		► Realizar el script para CheckCashierRol 
+			○ importar 
+				► use Illuminate\Support\Facades\Auth;
+			○ clase CheckCashierRol 
+
+
+				public function handle($request, Closure $next)
+			    {
+			        $user = Auth::user(); 
+			        if($user->rol_id != 2)
+			        {
+			            return redirect('home');
+			        }
+			        return $next($request);
+			    }
+		► Añadir prefijo para el middleware de cashier 
+			○ 
+				Route::middleware(['auth','cashier'])->prefix('cashier')->group(function(){
+					Route::resource('products', 'Cashier\ProductCashierController');
+				});
+
+		► Añadir enlace en app.blade.php para cashier
+			@if(auth::user()->rol-> name == 'cashier')
+                <li>
+                    <a href="{{url('cashier/products')}}" class="nav-link">Products</a>
+                </li>
+
+            @endif 
+
+		► Sales para cashier 
+
+			○ Crear controlador (si no se tiene crearlo) 	
+				• php artisan make:controller Cashier/SaleCashierController --resource 
+			○ Añadir ruta al grupo cashier 
+				• Route::resource('sales', 'Cashier\SaleCashierController'); 
+
+			○ Crear carpeta cashier/sales 
+
+			○ Crear archivo index en cashier/sales 
+
+				<div class="card-body">
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>  
+                    @endif
+
+
+                    <!--
+                    <div class="text-right">
+                        <a href="{{ url('sales/create')}}">
+                            <button class="btn btn-sm btn-success" style="margin-bottom: 20px">
+                                + New
+                            </button>
+                        </a>
+                    </div>
+                    -->
+
+                    <table class="table table-stripped table-bordered" id="myTable">
+                        <thead>
+                            <tr>    
+                                <td>User</td>
+                                <td>Client</td>
+                                <td>Description</td>
+                                <td>Total Amount</td>
+                                <td>Actions</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                                $count_total= 0; 
+                            ?>
+
+                            @foreach($sales as $sale)
+                            <tr>
+                                <td>{{$sale->user->name}}</td>
+                                <td>
+                                    @if($sale->client)
+                                    {{ $sale->client->name}}
+                                    @else
+                                    -
+                                    @endif
+
+                                </td>
+
+                                <td>{{$sale->description}}</td>
+                                <td>{{$sale->total_amount}}</td>
+                                <td>
+                                    
+                                    <a href="{{url('cashier/sales/'.$sale->id.'/sales_products')}}">
+                                    <button class="btn btn-sm btn-info" style="float:left; margin-right: 10px">Sale product</button>
+                                    </a>                                    
+                                </td>
+                            </tr>
+
+                            <?php 
+                                $count_total = $count_total + $sale->total_amount;
+                            ?>
+
+                            @endforeach
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-left; font-weight-bold">TOTAL: </td>
+                                <td class="text-right font-weight-bold">{{$count_total}}</td>
+
+                            </tr>
+                        </tfoot>
+
+                    </table>
+
+                </div>
+
+			○ index SaleCashierController 
+				• importar Auth 
+					► use Illuminate\Support\Facades\Auth;
+					► use App\Sale; 
+				• importar modelo Sales 
+					► use App\Sales;
+
+				• funcion index() 
+				    public function index()
+				    {
+				        $user = Auth::user();
+				        $sales = Sale::where('user_id', $user->id)->get();
+				        return view('cashier.sales.index', compact('sales'));
+				    }
+				
+
+			○ Añadir enlace para sales  
+
+				@if(auth::user()->rol-> name == 'cashier')
+                    <li>
+                        <a href="{{url('cashier/products')}}" class="nav-link">Products</a>
+                    </li>
+
+                    <li>
+                        <a href="{{url('cashier/sales')}}" class="nav-link">Sales</a>
+
+                    </li>
+
+                @endif				
+
+
+
+			○ Mostrar productos por usuario en sales  
+				• crear controlador 
+					► php artisan make:controller Cashier/SaleProductCashierController --resource
+				• agregar controlador al grupo de rutas 
+					► Route::resource('sales.sales_products', 'Cashier\SaleProductCashierController');
+				• index SaleProductCashierController 
+					importar 
+					► use App\Sale; 
+					► use App\SaleProduct;
+
+					funcion index() 
+
+					public function index($sale_id)
+				    {   
+				        $sale = Sale::find($sale_id);
+				        $sales_products = SaleProduct::where('sale_id', $sale->id)->get();
+
+				        return view('cashier.sales_products.index', compact('sale', 'sales_products'));
+				    }
+
+
+
+				• crear carpeta cashier/sales_products 
+
+				• crear archivo index.blade.php en cashier/sales_products 
+
+					► 
+
+				<div class="card-body">
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>  
+                    @endif
+
+                    <div class="text-right">
+                        <a href="{{ url('cashier/sales') }}">
+                        <button  class="btn btn-sm btn-primary"  style="float:left; margin-right: 15px; margin-bottom: 0px;"> Back
+                            
+
+                        </button>
+                        </a>
+
+                        <!--
+
+                        <a href="{{ url('cashier/sales/'.$sale->id.'/sales_products/create')}}">
+                            <button class="btn btn-sm btn-success" style="margin-bottom: 20px">
+                                + New
+                            </button>
+                        </a>
+
+                        -->
+                    </div>
+
+                    <table class="table table-stripped table-bordered" id="myTable">
+                        <thead>
+                            <tr>    
+                                <td>Sale</td>
+                                <td>Product</td>
+                                <td>Quantity</td>
+                                <td>Amount</td>
+                                <td>Actions</td>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($sales_products as $sale_product)
+                            <tr>
+                                <td>{{$sale_product->sale->id}}</td>
+                                <td>{{$sale_product->product->name}}</td>
+                                <td>{{$sale_product->quantity}}</td>
+                                <td>{{$sale_product->amount}}</td>
+                                <td>
+                                    <!--
+                                    <a href="{{ url('sales/'.$sale_product->sale->id.'/sales_products/'.$sale_product->id.'/edit')}}">
+                                    <button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+                                    </a> 
+                                    -->
+
+                                    {!! Form::open(['url' => 'cashier/sales/'.$sale_product->sale->id.'/sales_products/'.$sale_product->id, 'method'=>'DELETE', 'onsubmit' => 'return 
+                                    confirm("Are sure to delete sale product")', 'style' => 'float:left']) !!}
+
+                                    {!! Form::submit('Delete', ['class' => 'btn btn-sm btn-danger'])!!}
+                                    {!! Form::close()!!}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+
+	• Clientes opcional  en Sales 
+
+		► En superadmin/sales/create.blade.php 
+
+			<label>Client:</label>
+                {!! Form::select('client_id', $clients, null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => 'take a client']) !!} 
+
+    • Clientes en Sales Cashier 
+
+    	► Crear controlador para manejar clientes 
+    		○ php artisan make:controller Cashier/SaleClientCashierController --resource 
+
+    	► Añadir ruta al grupo de rutas cashier 
+    		○ Route::resource('sales_clients', 'Cashier\SaleClientCashierController');
+    	► Añadir formulario de cliente en cashier/sales/index.blade.php 
+    		○ 
+
+    		        {!! Form::open(['url' => 'cashier/sales_clients']) !!}
+                    <br>
+                    <label>Name:</label>
+                    {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>CI:</label>
+                    {!! Form::text('ci', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Phone:</label>
+                    {!! Form::text('phone', null, ['class' => 'form-control']) !!}
+
+                     <div class="text-center"></div>
+                    {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
+                    
+                    {!! Form::close()!!}
+
+                    <br>
+
+
+
+	    ► Modificar la funcion store de SaleClientCashierController 
+        	○ importar Auth 
+        		► use Illuminate\Support\Facades\Auth;
+        		► use App\Client;
+
+        	○ funcion store()   **** lo comentamos 
+
+        	    public function store(Request $request)
+			    {
+			        $user = Auth::user();
+
+			        $request->validate([
+			            'name' => 'required', 
+			            'ci' => 'required|unique:clients,ci', 
+			        ]);
+
+			        $request['user_id'] = $user->id;
+
+			        $client = Client::create($request->all());
+
+			        return redirect('cashier/sales_clients');
+			        
+
+			    }
+
+
+    • Productos por Sale  en  Cashier 
+
+    	► Añadir index($sale_id)
+
+		    public function index($sale_id)
+		    {   
+		        $sale = Sale::find($sale_id);
+		        $sales_products = SaleProduct::where('sale_id', $sale->id)->get();
+		        return view('cashier.sales_products.index', compact('sale', 'sales_products'));
+		    }
+
+
+    	► Añadir enlace para añadir productos 
+    		○ 
+
+                <a href="{{ url('cashier/sales/'.$sale->id.'/sales_products/create')}}">
+                    <button class="btn btn-sm btn-success" style="margin-bottom: 20px">
+                                + New
+                    </button>
+                </a>    
+
+
+
+                <td>
+                                    
+                    <a href="{{ url('cashier/sales/'.$sale_product->sale->id.'/sales_products/'.$sale_product->id.'/edit')}}">
+                    <button class="btn btn-sm btn-warning" style="float: left; margin-right: 10px">Edit</button>
+                    </a> 
+
+        ► Añadir archivo create a cashier/sales_products/
+        	○ 
+        		<div class="card-body">
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>  
+                    @endif
+
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+
+                    {!! Form::open(['url' => 'cashier/sales/'.$sale->id.'/sales_products']) !!}
+                    
+                    <!--
+                    <label>Sale:</label>
+                    {!! Form::text('sale_id', $sale->id, null, ['class' => 'form-control', 'required' => 'required']) !!}
+                    <br>
+                    -->
+
+                    <label>Product:</label>
+                    {!! Form::select('product_id', $products, null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Quantity:</label>
+                    {!! Form::number('quantity', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Amount</label>
+                    {!! Form::number('amount', null, ['class' => 'form-control', 'disabled' => 'disabled'])!!}
+
+                    <div class="text-center" style="margin-top:20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success', 'style' => 'margin-top: 20px']) !!}
+                    {!! Form::close() !!}
+
+                    </div>
+
+                </div>
+
+        ► Modificar create()
+        	○ Funcion create()
+        		• añadir modelo Products
+
+				• 
+				    public function create($sale_id)
+				    {
+				        $sale = Sale::find($sale_id);
+				        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id');
+
+				        return view('cashier.sales_products.create', compact('sale', 'products'));
+
+				    } 
+				    
+
+        	○ Funcion store()
+        		•
+        			public function store($sale_id, Request $request)
+				    {
+				        $request->validate([
+				            'product_id' => 'required', 
+				            'quantity' => 'required'
+				        ]);
+
+				        $sale = Sale::find($sale_id); 
+				        $product = Product::find($request->product_id);
+
+				        $request['sale_id'] = $sale_id;
+				        $request['amount'] = $request->quantity * $product->prize;
+				        
+				        $sale->total_amount = $sale->total_amount + $request->amount;
+				        $sale->save();
+
+				        $sale_product = SaleProduct::create($request->all());
+
+				        return redirect('cashier/sales/'.$sale_product->sale_id.'/sales_products');
+
+				    }
+
+
+        ► Añadir archivo edit a cashier/sales_products/
+        	○ 
+        		<div class="card-body">
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>  
+                    @endif
+
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+
+
+                    <div class="text-left">
+                        <a href="{{url('cashier/sales/'.$sale_product->sale_id.'/sales_products')}}">
+                            <button  class="btn btn-sm btn-primary"  style="float:left; margin-right: 15px; margin-bottom: 0px;"> Back
+                            </button>
+
+                        </a>
+                    </div><br><br>
+                    
+
+                    {!! Form::model($sale_product, ['url' => 'cashier/sales/'.$sale_product->sale_id.'/sales_products/'.$sale_product->id, 'method'=>'PUT']) !!}
+
+                    <label>Product:</label>
+                    {!! Form::select('product_id', $products, null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Quantity:</label>
+                    {!! Form::number('quantity', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Amount:</label>
+                    {!! Form::number('amount', null, ['class' => 'form-control', 'disabled' => 'disabled']) !!}
+                    
+                    <div class="text-center" style="margin-top: 20px">
+                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+                    {!! Form::close() !!}
+                    </div>
+
+                </div>
+
+        ► Modificar edit() 
+        	○ Funcion edit() 
+        		public function edit($sale_id, $id)
+			    {
+			        $sale_product = SaleProduct::find($id);
+			        $products = Product::orderBy('name', 'ASC')->pluck('name', 'id');
+
+			        return view('cashier.sales_products.edit', compact('sale_product', 'products')); 
+			    }
+
+        	○ Funcion update()
+        		public function update($sale_id,Request $request, $id)
+			    {
+			        $request->validate([
+			            'product_id' => 'required', 
+			            'quantity' => 'required'
+
+			        ]);
+
+			        $sale_product = SaleProduct::find($id);
+			        $product = Product::find($request->product_id);
+			        $sale = Sale::find($sale_id);
+
+			        $old_amount = $sale_product->amount;
+
+			        $request['sale_id'] = $sale_id;
+			        $request['amount'] = $request->quantity * $product->prize;
+
+			        $sale->total_amount = $sale->total_amount - $old_amount + $request->amount;
+			        $sale->save();  
+
+			        $sale_product->fill($request->all()); 
+			        $sale_product->save();
+
+			        return redirect('cashier/sales/'.$sale_product->sale_id.'/sales_products');
+			    } 
+
+
+		► Modificar delete() 
+			○ 
+				public function destroy($sale_id, $id)
+			    {
+			        $sale_product = SaleProduct::find($id); 
+
+			        if($sale_product)
+			        {
+			            $sale = Sale::find($sale_id); 
+
+			            $sale->total_amount = $sale->total_amount - $sale_product->amount;
+			            $sale->save();
+			            $sale_product->delete();
+			        }
+
+			        return redirect('cashier/sales/'.$sale_id.'/sales_products');
+
+
+			    }
+
+	• Sales en cashier  
+		► Controlador SaleCashierController.php
+				○ importar 
+					use App\Client; 
+
+				○ funcion store() 
+
+					public function store(Request $request)
+				    {
+				        $request->validate([
+				            'name' => 'required',
+				            'ci' => 'required|unique:clients,ci',  // unique para controlar de que no se repita el CI  
+				                   
+				        ]);
+
+				        $user = Auth::user(); 
+				        $request['user_id'] = $user->id;
+				        $client = Client::create($request->all());
+
+				        $request['total_amount'] = 0;
+				        $request['client_id'] = $client->id; 
+				        $sale = Sale::create($request->all());
+				        return redirect('cashier/sales');
+
+				    }
+
+				○ Cambiar url para store en archivo cashier/sales/index.blade.php 
+
+					• 
+						{!! Form::open(['url' => 'cashier/sales']) !!}
+
+		► Modificar cashier/sales/index.blade.php 
+
+			    <div class="card-body">
+
+                    <div>
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>  
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+
+                    <!--
+                    <div class="text-right">
+                        <a href="{{ url('sales/create')}}">
+                            <button class="btn btn-sm btn-success" style="margin-bottom: 20px">
+                                + New
+                            </button>
+                        </a>
+                    </div>
+
+                    -->
+
+                    {!! Form::open(['url' => 'cashier/sales']) !!}
+                    <br>
+                    <label>Name:</label>
+                    {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>CI:</label>
+                    {!! Form::text('ci', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Phone:</label>
+                    {!! Form::text('phone', null, ['class' => 'form-control']) !!}
+
+                    <label>Description:</label>
+                    {!! Form::textarea('description', null, ['class'=> 'form-control', 'required' => 'true']) !!}
+
+                    <div class="text-center"  style="margin-top:20px"></div>
+                    {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
+
+                    
+                    
+                    {!! Form::close()!!}
+
+                    <br>
+                    </div>
+
+                    <div>
+
+                    <table class="table table-stripped table-bordered" id="myTable">
+                        <thead>
+                            <tr>    
+                                <td>User</td>
+                                <td>Client</td>
+                                <td>Description</td>
+                                <td>Total Amount</td>
+                                <td>Actions</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                                $count_total= 0; 
+                            ?>
+
+                            @foreach($sales as $sale)
+                            <tr>
+                                <td>{{$sale->user->name}}</td>
+                                <td>
+                                    @if($sale->client)
+                                    {{ $sale->client->name}}
+                                    @else
+                                    -
+                                    @endif
+
+                                </td>
+
+                                <td>{{$sale->description}}</td>
+                                <td>{{$sale->total_amount}}</td>
+                                <td>
+                                    
+                                    <a href="{{url('cashier/sales/'.$sale->id.'/sales_products')}}">
+                                    <button class="btn btn-sm btn-info" style="float:left; margin-right: 10px">Sale product</button>
+                                    </a>                                      
+                                </td>
+                            </tr>
+
+                            <?php 
+                                $count_total = $count_total + $sale->total_amount;
+                            ?>
+
+                            @endforeach
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-left; font-weight-bold">TOTAL: </td>
+                                <td class="text-right font-weight-bold">{{$count_total}}</td>
+
+                            </tr>
+                        </tfoot>
+
+                    </table>
+
+                    </div>
+
+                </div>	
+
+        ► Modificar funcion store en SaleCashierController.php, para reemplar CIs existentes
+
+        	public function store(Request $request)
+		    {
+		        $request->validate([
+		            'name' => 'required',
+		            'ci' =>  'required', //'required|unique:clients,ci',   
+
+		        ]);
+
+		        $user = Auth::user(); 
+		        $request['user_id'] = $user->id;
+		        $client = Client::where('ci', $request->ci)->first(); // buscar CIs existentes
+		        if($client)   // Reemplazar valores del cliente existente 
+		        {
+		            $client->fill($request->all()); 
+		            $client->save(); 
+		        }
+		        else
+		        {
+		            $client = Client::create($request->all());
+		        }
+
+		        $request['total_amount'] = 0;
+		        $request['client_id'] = $client->id; 
+		        $sale = Sale::create($request->all());
+		        return redirect('cashier/sales');
+		    }
+
+    Sales Products en Sales 
+
+    	► Modificar el archivo cashier/sales/index.blade.php 
+    		○ 
+    			{!! Form::open(['url' => 'cashier/sales']) !!}
+                    <br>
+                    <label>Name:</label>
+                    {!! Form::text('name', null,['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>CI:</label>
+                    {!! Form::text('ci', null, ['class' => 'form-control', 'required' => 'required'])!!}
+
+                    <label>Phone:</label>
+                    {!! Form::text('phone', null, ['class' => 'form-control']) !!}
+
+                    <label>Product:</label>
+                    {!! Form::select('product_id', $products, null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Quantity:</label>
+                    {!! Form::number('quantity', null, ['class' => 'form-control', 'required' => 'required']) !!}
+
+                    <label>Description:</label>
+                    {!! Form::textarea('description', null, ['class'=> 'form-control', 'required' => 'true']) !!}
+
+                    <div class="text-center"  style="margin-top:20px"></div>
+                    {!! Form::submit('Save', ['class'=> 'btn btn-sm btn-success'])!!}
+                                 
+                {!! Form::close()!!}
+
+
+		► Modificar la funcion index() en SaleCashierController.php 
+
+			○ importar 
+				► 	use App\Product;
+					use App\SaleProduct;
+			○ funcion index() 
+
+				public function index()
+			    {
+			        $user = Auth::user();
+			        $sales = Sale::where('user_id', $user->id)->get();
+			        $products = Product::orderBy('name', 'ASC')->pluck();
+			        return view('cashier.sales.index', compact('sales', 'products'));
+			    }
+		► Modificar la funcion store() en SaleCashierController.php 
+
+			○ funcion store() 
+				public function store(Request $request)
+			    {
+			        $request->validate([
+			            'name' => 'required',
+			            'ci' =>  'required', //'required|unique:clients,ci',   
+			            'product_id' => 'required', 
+			            'quantity' => 'required', 
+			        ]);
+
+			        $user = Auth::user(); 
+			        $request['user_id'] = $user->id;
+			        $client = Client::where('ci', $request->ci)->first(); // buscar CIs existentes
+			        if($client)   // Reemplazar valores del cliente existente 
+			        {
+			            $client->fill($request->all()); 
+			            $client->save(); 
+			        }
+			        else
+			        {
+			            $client = Client::create($request->all());
+			        }
+
+			        $request['total_amount'] = 0;
+			        $request['client_id'] = $client->id; 
+			        $sale = Sale::create($request->all());
+
+			        $request['sale_id'] = $sale->id;
+			        $product = Product::find($request->product_id);
+			        $request['amount'] = $request->quantity * $product->prize;
+			        $sale->total_amount = $sale->total_amount + $request->amount;
+			        $sale->save();
+
+			        $sale_product = SaleProduct::create($request->all()); 
+
+			        return redirect('cashier/sales');
+			    }
+
+	Venta de productos[] por cliente
+		► Modificar el archivo cashier/sales/index.blade.php 
+
+	        <label>Product:</label>
+                {!! Form::select('products_id[]', $products, null, ['class' => 'form-control', 'required' => 'required']) !!}	
+        ► Modificar la funcion store() 
+
+        	    public function store(Request $request)
+			    {
+			        $request->validate([
+			            'name' => 'required',
+			            'ci' =>  'required', //'required|unique:clients,ci',   
+			            'products_id' => 'required', 
+			            'quantity' => 'required', 
+			        ]);
+
+			        $user = Auth::user(); 
+			        $request['user_id'] = $user->id;
+			        $client = Client::where('ci', $request->ci)->first(); // buscar CIs existentes
+			        if($client)   // Reemplazar valores del cliente existente 
+			        {
+			            $client->fill($request->all()); 
+			            $client->save(); 
+			        }
+			        else
+			        {
+			            $client = Client::create($request->all());
+			        }
+
+			        $request['total_amount'] = 0;
+			        $request['client_id'] = $client->id; 
+			        $sale = Sale::create($request->all());
+
+			        $request['sale_id'] = $sale->id;
+			        /*
+			        $product = Product::find($request->product_id);
+			        $request['amount'] = $request->quantity * $product->prize;
+			        $sale->total_amount = $sale->total_amount + $request->amount;
+			        $sale->save();
+
+
+			        $sale_product = SaleProduct::create($request->all()); 
+			        */
+
+			        foreach($request->products_id as $product_id) 
+			        {
+			            $product = Product::find($product_id);
+			            $request['product_id'] = $product_id;
+			            $request['amount'] = $request->quantity * $product->prize;
+			            $sale->total_amount = $sale->total_amount + $request->amount;
+			            $sale_product = SaleProduct::create($request->all()); 
+			        }
+
+			        
+			        $sale->save();
+			        return redirect('cashier/sales');
+			    } 
+
+
+	• Vista de presentación raiz
+		► se comenta
+			/*
+			Route::get('/', function () {
+			    return view('welcome');
+			});
+			*/
+
+		► Se añade la ruta 
+			Route::get('/', 'HomeController@front');
+
+
+		► Se añade funcion front en Controllers/HomeController.php 
+			public function front()
+			{
+			    return view('welcomeGeneral');
+			}
+
+		► Se copia el archivo archivo de caratula a views/ 
+			○ 
+				/welcomeGeneral.blade.php 
+
+		► Se copia archivos css a public/css 
+			○ 
+				public/css/estilo.css
+				public/css/bootstrap.css
+		► Se copia archivos js a public/js   
+			○ 	
+				public/js/popper.min.js 
+				public/js/jquery-3.3.1.slim.min.js
+				public/js/bootstrap.min.js 
+
+	• Referenciar imagenes desde la carpeta public/img 
+		► 
+			<div class="image">
+                    <img src="{{asset('img/products/img_4_2020-01-0400_13_47.jpg')}}">
+            </div>
+		► 
+			<div class="image">
+                    <img src="{{asset('img/products/img_5_2020-01-0400_17_37.jpg')}}">
+            </div>
+		► 
+
+
+	• Configurar rutas automáticas con parámetros 
+		► Añadir nueva ruta al grupo de rutas para admin 
+			○	
+				Route::get('sales/get_client/{ci}', 'Admin\SaleController@get_client');
+
+		► Añadir funcion get_client() en Admin/SaleController.php
+			○ 
+				public function get_client($ci)
+			    {
+			        $client = Client::where('ci', $ci)->first();
+
+			        if($client)
+			        {
+			            $name=$client->name;
+			        }
+			        else
+			        {
+			            $name="";
+			        }
+
+			        return $name; 
+
+			    }
+
+		► Añadir nueva ruta al grupo de rutas para cashier 
+			○	
+				Route::get('sales/get_client/{ci}', 'Cashier\SaleCashierController@get_client');
+
+		► Añadir funcion get_client() en Cashier/SaleCashierController.php
+			○ 
+				public function get_client($ci)
+			    {
+			        $client = Client::where('ci', $ci)->first();
+
+			        if($client)
+			        {
+			            $name=$client->name;
+			        }
+			        else
+			        {
+			            $name="";
+			        }
+
+			        return $name; 
+
+			    }	    
+
+		► Añadir atributo id al campo CI de cashier/sales/index.blade.php 
+			○ 
+				<label>CI:</label>
+                 
+                {!! Form::text('ci', null, ['id' => 'ci','class' => 'form-control', 'required' => 'required'])!!}
+
+        ► Añadir evento en script de cashier/sales/index.blade.php 
+        	○ 
+        		<script type="text/javascript">
+			    $(document).ready(function(){
+
+			        $('#ci').keyup(function(){
+			            console.log($('#ci').val());
+			        });	
+
+			        $('#myTable').DataTable();
+			    });
+
+				</script>
+
+
+		► Modificar evento en script de cashier/sales/index.blade.php 
+				<script type="text/javascript">
+				    $(document).ready(function(){
+
+				        $('#ci').keyup(function(){
+
+				            $.ajax({
+				                url: "{{ url('cashier/sales/get_client') }}" + "/" + $('#ci').val(),
+				                type: 'GET', 
+				                data: {}, 
+				                success: function(response){
+				                    $('#name').val(response);
+				                }
+
+				            });
+				        });
+
+				        $('#myTable').DataTable();
+				    });
+
+				</script>		
+
+				nota: se debe mantener comillas dobles o comillas simples 
+
+		► Añadir atributo id al campo name de cashier/sales/index.blade.php 
+
+			○ 
+				<label>Name:</label>
+                {!! Form::text('name', null,['id' => 'name','class' => 'form-control', 'required' => 'required'])!!}
+    • Modificar campo ci de clientes en request en Admin/UserClientController.php 
+
+    	► 
+    		'ci' => 'required|unique:clients,ci',
+
+    • Modificar campo ci de clientes en request en Admin/UserClientController.php para 
+      tener excepciones de filtrado 
+      	► 
+      		'ci' => 'required|unique:clients,ci,'.$request->ci.',ci',
+
+    • Redireccionar atras clientes si existiese alguno con igual ci  
+    	► 
+
+
+    		public function update($user_id, Request $request, $id)
+    	{
+	        $request->validate([
+	            'name' => 'required', 
+	            'ci' => 'required', 
+	            'phone' => 'required', 
+	        ]);
+
+	        $client = Client::find($id);
+	        $request['user_id'] = $user_id; 
+
+	        $clientX = Client::where('id', '!=', $id)->where('ci', $request->ci)->toSql();
+
+	        if($clientX) 
+	            {
+	                return redirect()->back();
+	            }
+
+	        else 
+	            {
+	                $client->fill($request->all());
+	                $client->save();
+	            }
+
+	        return  redirect('users/'.$client->user_id.'/clients');
+    	}
+
+
+   	• Mostrar productos de la base de datos en página welcome 
+   		► modificar views/welcomeGeneral.blade.php
+
+   			○ 
+
+		        <div class="row contenedor-cuadros">
+
+            
+
+		            @foreach($products as $product)
+		            <div class="col-md-4">
+
+		            <div class="card" style="width:300px">
+
+		                <div class="image">
+		                    <img src="{{asset('img/products/'.$product->picture)}}">
+		                </div>
+
+		                <div class="card-body">
+		                    <p>{{$product->name}}</p>
+		                </div>
+		            </div>
+
+		            </div>
+
+		            @endforeach
+
+            
+  
+       			</div>
+
+   		► Modificar app/Http/Controllers/HomeController.php 
+
+   			○ 
+   				public function front()
+			    {
+			        $products = Product::orderBy('name', 'ASC')->get(); 
+			        return view('welcomeGeneral', compact('products'));
+			    }
+
+
+
+	• Vista de ventas personalizada sales product cashier view  
+		► en cashier/sales/index.blade, modificar el campo product
+
+                   <label>Product:</label>
+
+                    <div class="row contenedor-cuadros">
+                        
+                        @foreach($products as $product)
+                        <div class="col-md-3">
+                            <div class="card" style="width:250px">
+                                <div class="image">
+
+                                    <img src="{{asset('img/products/'.$product->picture)}}" style="width:200px">
+                                    
+                                </div>
+
+                                <div class="card-body">
+
+                                    <p class="text-center">{{ $product->name }}</p>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <button id="sum" type="button" class="btn btn-sm btn-success" style="float:right" onclick="add_product('{{$product->id}}')">+</button>
+
+
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <button id="res" type="button" class="btn btn-sm btn-danger" style="float:left" onclick="sub_product('{{$product->id}}')">-</button>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div>
+                                        {!! Form::number('quantity', 0, ['class' => 'form-control', 'disabled' => 'disabled'])!!}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                        @endforeach
+
+                    </div> 
+
+
+
+           	<script type="text/javascript">
+
+			    function add_product(product_id)
+			    {
+			        valor = parseInt($('#product_' + product_id).val()); 
+
+			        valor = valor + 1; 
+
+			        $('#product_' + product_id).val(valor);
+
+
+			    }
+
+			    function sub_product(product_id)
+			    {
+			        if($('#product_' + product_id).val() == 0) 
+			        {
+			            $('#product_' + product_id).val(0); 
+			        }
+
+			        else 
+			        {
+			            valor = parseInt($('#product_' + product_id).val()); 
+
+			            valor = valor - 1; 
+
+			            $('#product_' + product_id).val(valor);
+
+			        }
+			    }
+
+			    $(document).ready(function(){
+
+			        $('#ci').keyup(function(){
+
+			            
+			            $.ajax({
+			                url: "{{ url('cashier/sales/get_client') }}" + "/" + $('#ci').val(),
+			                type: 'GET', 
+			                data: {}, 
+			                success: function(response){
+			                    $('#name').val(response);
+			                }
+
+			            });
+			        });
+
+			        $('#myTable').DataTable();
+			    });
+
+			</script>
+
+
+
+		► en SaleCashierController.php 
+			public function index()
+		    {
+		        $user = Auth::user();
+		        $sales = Sale::where('user_id', $user->id)->get();
+		        $products = Product::orderBy('name', 'ASC')->get();
+		        return view('cashier.sales.index', compact('sales', 'products'));
+		    }
+
+
+	• Crear products array en Cashier Sales 	
+
+		► en cashier/sales/index.blade.php se añade un formulario con campo de quantity 
+		  y atributo que guardará array 
+
+		  	    <div>
+                    {!! Form::hidden('quantity', $product->id.',0', ['class' => 'form-control', 'id' => 'product_'.$product->id, 'disabled' => 'disabled']) !!}
+
+                    {!! Form::number('scoreboard', 0, ['class' => 'form-control', 'id' => 'score_'.$product->id, 'disabled' => 'disabled'])!!}
+                </div> 
+
+
+        ► modificamos dentro del script de index.blade.php 
+
+
+        	function add_product(product_id)
+		    {
+
+
+		        var text  = $('#product_' + product_id).val(); 
+		        textArray = text.split(','); 
+		        console.log(textArray); 
+		        textArray[1] = parseInt(textArray[1]) + 1; 
+		        console.log(textArray); 
+
+		        $('#product_' + product_id).val(textArray[0] + ',' + textArray[1]);
+		        $('#score_' + product_id).val(textArray[1]);
+
+
+		    }
+
+		    function sub_product(product_id)
+		    {
+
+		        var text = $('#product_' + product_id).val(); 
+		        textArray = text.split(','); 
+
+
+		        if(textArray[1] == '0') 
+		        {
+		            $('#product_' + product_id).val(textArray[0] + ',' + textArray[1]); 
+		            $('#score_' + product_id).val(textArray[1]); 
+		        }
+
+		        else 
+		        {
+		            textArray[1] = parseInt(textArray[1]) - 1; 
+		            $('#product_' + product_id).val(textArray[0] + ',' + textArray[1]); 
+		            $('#score_' + product_id).val(textArray[1]);
+		        }
+		    }
+
+	• Trabajar con el array de productos de Cashier Sales Products  
+		► En cashier/sales/index modificar el tipo de atributo de de quantity 
+			○  
+				{!! Form::hidden('quantity[]', $product->id.',0', ['class' => 'form-control', 'id' => 'product_'.$product->id]) !!} 
+
+		► En Cashier/SaleCashierController 
+
+
+			 public function store(Request $request)
+			    {
+			        $request->validate([
+			            'name' => 'required',
+			            'ci' =>  'required', //'required|unique:clients,ci',   
+			            // 'products_id' => 'required', 
+			            // 'quantity' => 'required',
+			            'description' => 'required',  
+			        ]);
+
+			        $user = Auth::user(); 
+			        $request['user_id'] = $user->id;
+			        $client = Client::where('ci', $request->ci)->first(); // buscar CIs existentes
+			        if($client)   // Reemplazar valores del cliente existente 
+			        {
+			            $client->fill($request->all()); 
+			            $client->save(); 
+			        }
+			        else
+			        {
+			            $client = Client::create($request->all());
+			        }
+
+			        $request['total_amount'] = 0;
+			        $request['client_id'] = $client->id; 
+			        $sale = Sale::create($request->all());
+
+			        $request['sale_id'] = $sale->id;
+
+			        foreach($request->quantity as $quantum) 
+			        {
+			            $quantum = explode(',', $quantum); 
+
+			            $product = Product::find((int)$quantum[0]);
+
+			            $quantity = $quantum[1] + 0; 
+
+			            $amount = $quantity * $product->prize; 
+
+			            $sale->total_amount = $sale->total_amount + $amount; 
+
+			            $sale_product = SaleProduct::create([
+			                'sale_id' => $sale->id,
+			                'product_id' => $product->id, 
+			                'quantity' => $quantity,
+			                'amount' => $amount, 
+			            ]);
+			        }
+
+			        
+			        $sale->save();
+			        return redirect('cashier/sales');
+			    }
+
+
+	• HTML to PDF 
+		► Instalar librerias 
+			○ composer require barryvdh/laravel-dompdf
+		► Copiar en config/app.php 
+			○ Barryvdh\DomPDF\ServiceProvider::class,
+		► Limpiar cache de configuracion 
+			○ php artisan cache:clear
+			○ php artisan config:cache
+		► Crear nueva ruta para la exportacion 
+			○ Route::get('sales/{id}/bill', 'Cashier\SaleCashierController@bill'); 
+
+		► Habilitar boton para exportar en cashier/sales/index en el campo actions 
+			○ 
+				<a href="{{'sales/'.$sale->id.'/bill'}}" target="_blank">
+                                        <button class="btn btn-sm btn-secondary" style="float:center">Bill </button>
+
+                </a> 
+
+		► Crear funcion en el controlador SaleCashierController
+			○ 
+				public function bill($id) 
+			    {
+			        dd('hola');
+			    }
+		► Importar PDF 
+			○ 
+				use Barryvdh\DomPDF\Facade as PDF; 
+		► Añadir en la funcion bill  
+			○ 
+				public function bill($id) 
+			    {
+
+			        $pdf = PDF::loadView('cashier.sales.bill');
+			        return $pdf->stream();
+			    }
+
+		► Crear archivo bill en cashier/sales/ 
+			○ bill.blade.php  
+
+		► Modificar sales/bill para formato factura
+
+			○ 
+				<!DOCTYPE html>
+				<html>
+				<head>
+					<title>Bill</title>
+					<style type="text/css">
+						table, th, td{
+							border: 1px solid black;
+							text-align: left;
+						}
+
+
+					</style>
+
+				</head>
+
+
+				<body>
+
+					
+
+
+
+					<h3>LLAJTA MILK S.A.</h3> 
+					<p>SUBSIDIARY: </p> 
+					<p>ADDRESS: </p>
+					<p>PHONES: 4200124 Int. 122</p>
+					<p>Quillacollo - Cochabamba</p>
+
+							<p>SALES CHECK</p>
+					<p>---------------------------</p>
+					<p>NIT: </p>
+					<p>BILL NO.</p>
+					<p>AUTORIZATION </p>
+					<p>CASHIER: {{$sale->user->name}}</p>
+					<p>---------------------------</p>
+					<p>DATE: {{$fecha}} </p>
+					<p>NIT/CI: {{$sale->client->ci}}</p>
+					<p>SENOR(ES): {{$sale->client->name}} </p>
+					<p>---------------------------</p>
+
+					<table>
+						<thead>
+							<tr>
+								<td>Name</td>
+								<td>Quantity</td>
+								<td>Unit/P</td>
+								<td>SubTotal</td>
+
+							</tr>	
+						</thead>
+						<tbody>
+							<?php 
+								$count_total = 0; 
+							?>
+							@foreach($sales_products as $sale_product)
+							<tr>
+								<td>{{$sale_product->product->name}}</td>
+								<td>{{$sale_product->quantity}}</td>
+								<td>{{$sale_product->product->prize}}</td>
+								<td>{{$sale_product->amount}}</td>	
+							</tr>
+							<?php 
+								$count_total = $count_total + $sale_product->amount;
+
+							?>
+
+
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="3" class="text-left; font-weight-bold">TOTAL: </td>
+								<td class="text-right font-weight-bold">{{$count_total}}</td>
+							</tr>
+
+						</tfoot>
+
+
+					</table>
+				</body>
+				</html>
+
+		► Modificar funcion bill para incorporar modelos y variables 
+
+			public function bill($id) 
+
+		    {
+		        $fecha = Carbon::now()->toDateTimeString(); 
+		        $sale = Sale::find($id);
+		        $sales_products = SaleProduct::where('sale_id',$sale->id)->get();
+
+		        $pdf = PDF::loadView('cashier.sales.bill', compact('sale', 'sales_products', 'fecha'))->setPaper('letter','landscape');
+		        return $pdf->stream();
+		    }
+
+
+		    version 2 
+
+		    public function bill($id) 
+		    
+		    {
+		        $fecha = Carbon::now()->toDateTimeString(); 
+		        $sale = Sale::find($id);
+		        $sales_products = SaleProduct::where('sale_id',$sale->id)->get();
+
+		        $pdf = PDF::loadView('cashier.sales.bill', compact('sale', 'sales_products', 'fecha'));
+		        return $pdf->stream();
+		    }
+
+	• QR 
+
+		► Crear cadena para QR en funcion bill($id) 
+
+			public function bill($id) 
+		    {
+		        $fecha = Carbon::now()->toDateTimeString(); 
+		        $sale = Sale::find($id);
+		        $sales_products = SaleProduct::where('sale_id',$sale->id)->get();
+		        $nameInterprise = "LLAJTA MILK"; 
+
+		        $qr = $nameInterprise."|".$sale->user->name."|".$sale->client->ci."|".$sale->client->name."|".$sale->total_amount."|".$sale->updated_at;
+
+		        $pdf = PDF::loadView('cashier.sales.bill', compact('sale', 'sales_products', 'fecha', 'qr'));
+		        return $pdf->stream();
+		    }
+
+		► Configurar zona horaria para el servidor en config/app 
+			○   'timezone' => 'America/La_Paz', 
+
+			○ php artisan cache:clear 
+
+			○ php artisan config:cache 
+
+		► Instalar el paquete para qr en https://www.simplesoftware.io/simple-qrcode/es/
+			○ composer require simplesoftwareio/simple-qrcode
+		► Registrar rutas 
+			○ Dentro de providers en config/app.php 
+				SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class
+			○ Dentro de aliases en config/app.php 
+				'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class  
+
+			○ Actualizar el framework 
+
+				php artisan cache:clear 
+				php artisan config:cache 
+
+		► En el archivo bill.blade.php agregar img para qr 
+			○ 
+				<img src="data:image/png;base64,{!! base64_encode(QrCode::format('png')->size(150)->generate($qr))!!}">
+
+	• Crear reportes 
+
+		► Añadir enlace en la cinta de opciones de app.blade.php para superadmin 
+
+			○ 
+				<li>
+                    <a href="{{url('reports')}}" class="nav-link">Reports</a>
+                </li>
+
+        ► Añadir ruta en web.php 
+
+        	○ 
+        		Route::resource('reports', 'Admin\ReportController'); 
+
+        ► Crear controlador para reports 
+        	○ 
+        		php artisan make:controller Admin/ReportController --resource
+
+        ► Crear vista para reports 
+        	○ Crear carpeta reports en views/superadmin/ 
+        	○ Añadir archivo index.blade
+
+        ► Modificar funcion index en ReportController 
+        	○ Añadir App\User
+        	○ Añadir App\Sale 
+        	○ 
+        		public function index()
+
+			    {
+			        $periods = ['day', 'week', 'month', 'year', 'another...'];  
+			        $users = User::orderBy('name', 'ASC')->pluck('name', 'id');
+			 
+
+			        return view('superadmin.reports.index', compact('periods', 'users'));
+			    }
+
+       	► Modificar archivo reports/index 
+       		○ 
+
+			@extends('layouts.app')
+
+			@section('content')
+			<div class="container">
+			    <div class="row justify-content-center">
+			        <div class="col-md-12">
+			            <div class="card">
+			                <div class="card-header">Reports</div>
+
+			                <div class="card-body">
+			                    @if (session('status'))
+			                        <div class="alert alert-success" role="alert">
+			                            {{ session('status') }}
+			                        </div>  
+			                    @endif
+
+			                    {!! Form::open(['url' => 'reports', 'files' => true]) !!}
+
+			                    <label>Period:</label>
+			                    {!! Form::select('period', $periods,  null, ['id' => 'period','class' => 'form-control', 'required' => 'required']) !!}
+
+			                    <label>Users:</label>
+			                    {!! Form::select('user', $users, null, ['id' => 'user', 'class'=> 'form-control', 'placeholder' => 'all']) !!}
+
+			                    <div class="text-center" style="margin-top:20px">
+			                    <button id="get_query" type="button" class="btn btn-sm btn-info" onclick="querySale()">query</button>
+			                    
+
+			                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-success']) !!}
+
+			                    {!! Form::close() !!}
+
+
+
+			                    </div>
+
+
+
+			            </div>
+			            <div id="report">
+			                 <table class="table table-stripped table-bordered" id="myTable">
+			                                        <thead>
+			                                            <tr>    
+			                                                <td>User</td>
+			                                                <td>Client</td>
+			                                                <td>Description</td>
+			                                                <td>Total Amount</td>
+			                                            </tr>
+			                                        </thead> 
+			                                        <tbody>
+			                                            <?php 
+			                                                $count_total = 0; 
+			                                            ?>
+			                                            @foreach($sales as $sale)
+			                                            <tr>
+			                                                <td>{{$sale->user->name}}</td>
+			                                                <td>
+			                                                    @if($sale->client)
+			                                                        {{ $sale->client->name}}
+			                                                    @else
+			                                                        -
+			                                                    @endif
+
+			                                                </td>
+			                                                <td>{{$sale->description}}</td>
+			                                                <td>{{$sale->total_amount}}</td>
+
+
+			                                            </tr>
+			                                            <?php  
+			                                                $count_total = $count_total + $sale->total_amount; 
+			                                            ?>
+			                                            @endforeach
+			                                        </tbody>
+			                                        <tfoot>
+			                                            <tr>
+			                                                <td colspan="3" class="text-left; font-weight-bold">TOTAL: </td>
+			                                                <td class="text-right font-weight-bold">{{$count_total}}</td>                                    
+			                                            </tr>
+			                                        </tfoot>
+			                </table>
+
+			               
+			            </div>
+			        </div>
+			    </div>
+			</div>
+			@endsection
+
+			@section('scripts')
+
+			<script type="text/javascript">
+
+			    function querySale()
+			    {
+			        var period = $('#period').val();
+			        var user = $('#user').val(); 
+			        console.log(period); 
+			        console.log(user);
+
+
+			        $.ajax({
+			            url: "{{ url('reports/query') }}" + "/" + $('#period').val() + "/" + $('#user').val(),  
+			            type: 'GET', 
+			            data: {},
+			            success: function(response){
+			                console.log(response);
+			                } 
+			        });
+
+			    }
+
+
+			    $(document).ready(function(){
+
+			        /*
+			        $('#get_query').keyup(function(){
+
+
+			            console.log("Hola");
+			            
+			        
+			            $.ajax({
+			                url: "{{ url('reports/query') }}" + "/" + $('#period').val() + "/" + $('#user').val(),  
+			                type: 'GET', 
+			                data: {},
+			                success: function(response){
+			                    console.log(response);
+			                } 
+			            });
+
+			        }); 
+			        */
+
+			        $('#myTable').DataTable();
+			    });
+
+
+			</script>
+			@endsection
+
+		► Modificar la funcion store de ReportController 
+
+			public function store(Request $request)
+		    {
+		        $request->validate([
+		            'period' => 'required', 
+		            //'user' => 'required',
+		        ]);
+		        
+		        $period = $request->period;
+		        $user = $request->user;
+		        //dd($user);
+		        $date = Carbon::now()->toDateTimeString();
+		        $date = substr($date,0,10);
+		        //$date = str_replace(':', ',', $date);   
+		        //$date = str_replace('-', ',', $date);
+		        //$date = str_replace(' ', ',', $date);
+
+		        switch($period) {
+		            case 0: 
+		                //echo "Day"; 
+		                if($user == null)
+		                {
+		                    $sales = Sale::whereDate('created_at',$date)->get();
+		                }
+		                else{
+		                    $sales = Sale::whereDate('created_at',$date)->where('user_id', $user)->get();    
+		                }
+
+		                dd($sales);
+		                
+		                $name = User::selectedUser($period, $date, $sales, $user); 
+		              
+		                break; 
+
+		            case 1: 
+		                //echo "Week"; 
+		                $name = User::selectedUser($period); 
+		                break; 
+
+		            case 2: 
+		                //echo "Month"; 
+		                $name = User::selectedUser($period);  
+		                break; 
+
+		            case 3: 
+		                //echo "Year"; 
+		                $name = User::selectedUser($period); 
+		                break; 
+		            case 4: 
+		                //echo "Another"; 
+		                break;
+
+		        }
+		    } 
+
+
+
+
+
+		► Añadir ruta para usar ajax en web.php 
+			○ 
+			Route::get('reports/query/{period_sub}/{user_id}', 'Admin\ReportController@query');
+
+		► Añadir funcion query en ReportController
+			○ 
+			
+			public function query($period, $id)
+		    {
+		        $date = Carbon::now()->toDateTimeString();
+		        $date = substr($date,0,10);
+		        $user_id = $id; 
+
+
+		        switch($period) {
+		            case 0: 
+		                //echo "Day"; 
+		                if($user_id == null)
+		                {
+		                    $sales = Sale::whereDate('created_at',$date)->get();
+		                    return $sales; 
+		                }
+		                else{
+		                    $sales = Sale::whereDate('created_at',$date)->where('user_id', $user_id)->get(); 
+		                    return $sales;    
+		                }
+
+		                // dd($sales);
+		                
+		                // $name = User::selectedUser($period, $date, $sales, $user); 
+		              
+		                break; 
+
+		            case 1: 
+		                //echo "Week"; 
+		                $name = User::selectedUser($period, $date, $sales, $user);  
+		                break; 
+
+		            case 2: 
+		                //echo "Month"; 
+		                $name = User::selectedUser($period, $date, $sales, $user);  
+		                break; 
+
+		            case 3: 
+		                //echo "Year"; 
+		                $name = User::selectedUser($period, $date, $sales, $user);  
+		                break; 
+		            case 4: 
+		                //echo "Another"; 
+		                break;
+
+		        }
+
+		    }
+
+
+		► Añadir botton para mover informacion con jquery en reports/index 
+			○  
+			 <button id="get_query" type="button" class="btn btn-sm btn-info" onclick="querySale()">query</button>
+
+
+		► Añadir funcion ajax 
+			○ 
+
+			function querySale()
+		    {
+		        var period = $('#period').val();
+		        var user = $('#user').val(); 
+		        console.log(period); 
+		        console.log(user);
+
+
+		        $.ajax({
+		            url: "{{ url('reports/query') }}" + "/" + $('#period').val() + "/" + $('#user').val(),  
+		            type: 'GET', 
+		            data: {},
+		            success: function(response){
+		                console.log(response);
+		                } 
+		        });
+
+		    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INQUIETUDES 
+
+	• Analizar $rol->name // lo toma como atributo name ? 
+	• Recuperar password encriptado en campo 
+ 	• Implementar campo de foto para usuario  

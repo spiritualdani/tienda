@@ -36,6 +36,8 @@ Route::middleware(['auth', 'super'])->group(function () {
 	
 	Route::resource('sales.products_sales', 'Admin\ProductSaleController'); 
 	Route::resource('users.clients', 'Admin\UserClientController'); 
+	Route::resource('reports', 'Admin\ReportController');
+	Route::get('reports/query/{period_sub}/{user_id}', 'Admin\ReportController@query');
 
 
 });

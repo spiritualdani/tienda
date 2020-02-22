@@ -91,6 +91,9 @@
                                 <a   href="{{url('/sales')}}"class="nav-link">Sales</a>
 
                             </li> 
+                            <li>
+                                <a href="{{url('reports')}}" class="nav-link">Reports</a>
+                            </li>
 
                         @endif
 
