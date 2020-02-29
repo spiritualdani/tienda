@@ -45,4 +45,53 @@
 		} 
 
 
+	• Crear version gratuita amazon web service 
+		► Cuando se crea en VPS, se maneja IP 
+	• Servidores compartidos 
+		► 000webhost 
+		► account 
+				○ strongdaniel15@gmail.com
+				○ W
+
+		► crear comprimido de vendor zip y uno para los demas archivos con nombre tienda
+		► crear pagina: https://cochamilk.000webhostapp.com/\
+			○ https://files.000webhost.com/
+			○ https://www.000webhost.com/members/website/cochamilk/build
+
+		► Crear base de datos  
+			○ seccion Database Manager 
+				• crear base de datos  
+					name : admin	
+					password : admin
+				• despues de redigirse a la pagina importar base de datos local "tienda" 
+			
+			○ en la pagina https://databases-auth.000webhost.com/db_structure.php?server=1&db=id12761001_tienda
+				• importar base de datos local 
+
+			○ Modificar archivo .env en la raiz / del sitio https://files.000webhost.com/
+				• 
+					DB_CONNECTION=mysql
+					DB_HOST=127.0.0.1
+					DB_PORT=3306
+					DB_DATABASE=id12761001_tienda
+					DB_USERNAME=id12761001_admin
+					DB_PASSWORD=admin
+
+			○  Extraer las carpetas comprimidas
+
+
+			○  Mover carpetas a la raiz de la pagina 
+				• https://files.000webhost.com/
+
+			○  Copiar los mismos archivos de public a public_html 
+
+			○ Borrar cache en boostrap/cache 
+				• cambiar nombre de packages y services 
+
+			○ modificar /config/database.php en el file manager en  'mysql' array 
+				•  'host' => 'localhost', 
+
+			○ modicar para consultas en mysql array, para realizar consultas mas libres
+				• 'strict' => false,
+				nota: depende mucho de las versiones de mysql 
 
