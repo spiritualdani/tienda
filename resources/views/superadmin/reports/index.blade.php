@@ -19,11 +19,11 @@
                             {!! Form::open(['url' => 'reports', 'method' => 'GET', 'files' => true]) !!}
                             <div>
                             <label>Period:</label>
-                            {!! Form::select('period', $periods,  null, ['id' => 'period', 'class' => 'form-control', 'onchange' => 'periodNow(this.value)']) !!}
+                            {!! Form::select('period', $periods,  $request->period, ['id' => 'period', 'class' => 'form-control', 'onchange' => 'periodNow(this.value)']) !!}
                             </div>
 
                             <label>Users:</label>
-                            {!! Form::select('user', $users, null, ['id' => 'user', 'class'=> 'form-control', 'placeholder' => 'all']) !!} 
+                            {!! Form::select('user', $users, $request->user, ['id' => 'user', 'class'=> 'form-control', 'placeholder' => 'all']) !!} 
                         
                             <br>
                             <div id="specific_date">
@@ -36,7 +36,9 @@
                             -->
 
                             <div class="text-center" style="margin-top:20px">
-                            <button id="get_query" type="button" class="btn btn-sm btn-info" onclick="querySale()">query</button>
+
+                            <!--
+                            <button id="get_query" type="button" class="btn btn-sm btn-info" onclick="querySale()">query</button> -->
 
                             {!! Form::submit('Check', ['class' => 'btn btn-sm btn-success']) !!}
 

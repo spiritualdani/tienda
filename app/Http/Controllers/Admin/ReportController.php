@@ -18,7 +18,7 @@ class ReportController extends Controller
     {
         $periods = ['day', 'week', 'month', 'year', 'another'];  
         $users = User::orderBy('name', 'ASC')->pluck('name', 'id');
-        $sales = "null"; 
+        $sales = Sale::orderBy('created_at', 'DESC'); 
         //dd($sales);
 
         $user_id = $request->user;
@@ -29,52 +29,54 @@ class ReportController extends Controller
 
         if(isset($user_id))
         {
-            
+
+            /*N*/
+            $sales = $sales->where('user_id', $user_id);
+
+      
 
             if(isset($specific))
             {
 
-                $sales = Sale::where('user_id', $user_id)->whereDate('created_at', $specific)->get();
-                return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
+                $sales = $sales->whereDate('created_at', $specific);
+               
             }
 
             else
             {
+                if(isset($period))
+                {
+                    switch($period)
+                    {    
+                        case 0: 
+                            $days = Carbon::today(); // con hora 0:0:0 
+                            //$sales = $sales->where('created_at','>', $days);
+                            break;
+                        case 1:
+                            $days = Carbon::today()->subDays(7); // dia 0:0:0 
+                            break; 
 
-                switch($period)
-                {    
-                    case 0: 
-                        $date = Carbon::now();
-                        $sales =  Sale::where('user_id', $user_id)->whereDate('created_at', $date)->get();
-                        return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
-                        break;
-                    case 1:
-                        $date = Carbon::now()->subDays(7);
-                        $now = Carbon::now();
-                        dd($now);
-                        $sales = Sale::where('user_id', $user_id)->where('created_at', '<', $now)->where('created_at', '>=', $date)->get();
-                        return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
-                        break; 
+                        case 2: 
+                            $days = Carbon::now()->firstOfMonth();   
+                            break;
 
-                    case 2: 
-                        /*
-                        $date = Carbon::now()->subDays(30)->toDateTimeString(); 
-                        $date = substr($date, 0,10);
-                        */
-                        $date = Carbon::now(); 
-                        $date = substr($date, 5, 2);
-                        $sales = Sale::where('user_id', $user_id)->whereMonth('created_at', $date)->get();
-                        return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
+                        case 3: 
+                            $days = Carbon::now()->firstOfYear(); 
+                            break; 
 
-                    case 3: 
-                        $date = Carbon::now();
-                        $date = substr($date, 0,4);
-                        $date = Carbon::create($date);
-                        $sales = Sale::where('user_id', $user_id)->where('created_at', '>=',$date)->get();
-                        return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
-                        break; 
+                        default: 
+                            $days = Carbon::today();
+                            break;
+                    }
+
+                    $sales = $sales->where('created_at', '>', $days);
+
                 }
+
             }
+
+            $sales = $sales->get();
+
           
         }
 
@@ -84,8 +86,8 @@ class ReportController extends Controller
             if(isset($specific))
             {
 
-                $sales = Sale::whereDate('created_at', $specific)->get();
-                return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
+                $sales = Sale::whereDate('created_at', $specific);
+                
             }
 
             else  
@@ -94,48 +96,37 @@ class ReportController extends Controller
                 switch($period)
                 {
                     case 0: 
-                        $date = Carbon::now()->toDateTimeString(); 
-                        $date = substr($date,0,10); 
-
-                        $sales = Sale::whereDate('created_at', $date)->get();
-                        return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
-                        break; 
-
-                    case 1: 
-                        $date = Carbon::now()->subDays(7); 
-                        // ejemplo : 2020-02-28  $date = 2020-02-21
-                        $sales = Sale::where('created_at', '<', Carbon::now())->where('created_at', '>=', $date)->get();
-                        return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
+                        $days = Carbon::today(); // con hora 0:0:0 
+                        //$sales = $sales->where('created_at','>', $days);
+                        break;
+                    case 1:
+                        $days = Carbon::today()->subDays(7); // dia 0:0:0 
                         break; 
 
                     case 2: 
-                        /*
-                        $date = Carbon::now()->subDays(30)->toDateTimeString();
-                        $date = substr($date, 0, 10);
-                        */
-
-                        $date = Carbon::now(); 
-                        $date = substr($date, 5, 2);
-                        $sales = Sale::whereMonth('created_at', $date)->get();
-                        return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
-
-                        break; 
+                        $days = Carbon::now()->firstOfMonth();   
+                        break;
 
                     case 3: 
-                        $date = Carbon::now(); 
-                        $date = substr($date,0,4);
-                        $date = Carbon::create($date);
-                        $sales = Sale::where('created_at', '>=',$date)->get();
-                        return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
+                        $days = Carbon::now()->firstOfYear(); 
+                        break; 
 
+                    default: 
+                        $days = Carbon::today();
                         break;
 
                 } 
 
+                $sales = $sales->where('created_at', '>', $days);
+
             }
+
+            $sales = $sales->get();
+
         }
+
  
-       return view('superadmin.reports.index', compact('periods', 'users', 'sales'));
+       return view('superadmin.reports.index', compact('periods', 'users', 'sales', 'request'));
 
       
     }

@@ -1,0 +1,48 @@
+
+	• break se sale de esa funcion, 
+
+	• plantilla en psd 
+		► Nos dan capas del sitio 
+
+	• inspinia 	
+		► Gestionar listado
+
+		► https://github.com/Atnic/laravel-inspinia
+
+
+
+
+	• Selector de usuarios  
+		usuarios user_id (1, 2, 3, 4)
+			► 
+		rango 	 range    (dia, semana, mes, ano)
+			► 
+				1-> dia
+				2-> semana 
+				3-> mes 
+				4-> ano  
+
+		date     date 
+			► 
+				2020-02-15 
+	• en index 
+		$sales = Sale::orderBy('created_at', 'DESC');
+
+
+	• filtrar 
+		if(isset($request->user_id))
+		{
+			$sale = $sale->where('user_id', $request->user_id); 
+
+
+		}	
+		if (isset($request->date))
+		{
+			// $sale = $sale->where('created_at',$request->date); // cuidado con los horarios, 
+			$sale = $sale->whereDate('created_at',$request->date);
+			nota: whereDate no reconoce dentro de un blade 
+
+		} 
+
+
+
