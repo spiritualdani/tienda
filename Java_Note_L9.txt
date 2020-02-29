@@ -19,6 +19,18 @@
 	if(isset($var))
 
 
+	Carbon::now(); 
+
+	Carbon::now()->subDays(7);
+
+
 
 	EMPEZAR DE NUEVO 
 	• Desde la funcion index 
+
+
+
+
+	• modificamos /reports/index  
+
+	• 
