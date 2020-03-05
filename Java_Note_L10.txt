@@ -95,3 +95,6 @@
 				• 'strict' => false,
 				nota: depende mucho de las versiones de mysql 
 
+		nota: si se istalan nuevos paquetes las carpetas cambiaran 
+			• 
+

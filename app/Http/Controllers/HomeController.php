@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Product; 
+use App\Product;
+
 class HomeController extends Controller
 {
     /**
@@ -25,10 +26,10 @@ class HomeController extends Controller
     {
         return view('home');
     }
-    public function front()
-    {
 
-         $products = Product::orderBy('name', 'ASC')->get();
+    public function front() 
+    {
+        $products = Product::orderBy('name', 'ASC')->get();
         return view('welcome3', compact('products'));
 
     }

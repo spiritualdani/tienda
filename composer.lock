@@ -4,8 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c48653d069d9e8bca392105a95d04cce",
+    "content-hash": "52872e8aa86f946a015f4436eb35cd58",
     "packages": [
+        {
+            "name": "atnic/laravel-inspinia",
+            "version": "v0.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Atnic/laravel-inspinia.git",
+                "reference": "a2ed4848b24367df497ef8b99aac2812645ef6ec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Atnic/laravel-inspinia/zipball/a2ed4848b24367df497ef8b99aac2812645ef6ec",
+                "reference": "a2ed4848b24367df497ef8b99aac2812645ef6ec",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^5.4",
+                "php": ">=5.6.4"
+            },
+            "require-dev": {
+                "fzaninotto/faker": "~1.4",
+                "laravel/tinker": "~1.0",
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "~5.7"
+            },
+            "type": "package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Atnic\\Inspinia\\Providers\\AppServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Atnic\\Inspinia\\": "app/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Laravel Package for integrating Inspinia template and this package is Laravel Mix friendly.",
+            "keywords": [
+                "composer",
+                "inspinia",
+                "laravel",
+                "package"
+            ],
+            "time": "2018-05-12T17:01:15+00:00"
+        },
         {
             "name": "bacon/bacon-qr-code",
             "version": "1.0.3",
